@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +11,8 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
-import { grades, attendance } from '../../data/dummyData';
-import { Bell, MessageSquare } from 'lucide-react';
+import { grades, attendance, announcements as dummyAnnouncements } from '../../data/dummyData';
+import { Bell, MessageSquare, Megaphone } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -27,6 +27,16 @@ ChartJS.register(
 
 const OrangTuaDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+  const [announcements, setAnnouncements] = useState([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('simpatik_announcements');
+    if (saved) {
+      setAnnouncements(JSON.parse(saved));
+    } else {
+      setAnnouncements(dummyAnnouncements);
+    }
+  }, []);
   
   // Data dummy chart
   const gradeData = {
@@ -59,6 +69,25 @@ const OrangTuaDashboard = () => {
         <h2 className="text-2xl font-bold">Halo, {currentUser.nama}</h2>
         <p className="mt-1 opacity-90">Berikut adalah perkembangan anak Anda, Andi.</p>
       </div>
+
+      {/* Pengumuman Section */}
+      {announcements.length > 0 && (
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <Megaphone className="h-5 w-5 text-blue-600" />
+            <h3 className="text-md font-semibold text-blue-800">Pengumuman Sekolah</h3>
+          </div>
+          <div className="space-y-3">
+            {announcements.slice(0, 2).map((a) => (
+              <div key={a.id} className="bg-white rounded-xl p-4 shadow-sm border border-blue-50">
+                <h4 className="font-semibold text-gray-900">{a.judul}</h4>
+                <p className="text-xs text-gray-400 mb-2">{a.tanggal}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{a.isi}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">

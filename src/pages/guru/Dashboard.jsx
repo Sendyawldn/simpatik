@@ -1,8 +1,19 @@
-import React from 'react';
-import { students, grades } from '../../data/dummyData';
-import { CheckCircle, AlertCircle, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { students, grades, announcements as dummyAnnouncements } from '../../data/dummyData';
+import { CheckCircle, AlertCircle, FileText, Megaphone } from 'lucide-react';
 
 const GuruDashboard = () => {
+  const [announcements, setAnnouncements] = useState([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('simpatik_announcements');
+    if (saved) {
+      setAnnouncements(JSON.parse(saved));
+    } else {
+      setAnnouncements(dummyAnnouncements);
+    }
+  }, []);
+
   return (
     <div className="space-y-6">
       <div>
@@ -13,6 +24,25 @@ const GuruDashboard = () => {
           Selamat datang. Berikut adalah ringkasan kelas Anda hari ini.
         </p>
       </div>
+
+      {/* Pengumuman Section */}
+      {announcements.length > 0 && (
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <Megaphone className="h-5 w-5 text-blue-600" />
+            <h3 className="text-md font-semibold text-blue-800">Pengumuman Terbaru</h3>
+          </div>
+          <div className="space-y-3">
+            {announcements.slice(0, 2).map((a) => (
+              <div key={a.id} className="bg-white rounded-lg p-3 shadow-sm border border-blue-50">
+                <h4 className="font-medium text-gray-900">{a.judul}</h4>
+                <p className="text-xs text-gray-400 mb-1">{a.tanggal}</p>
+                <p className="text-sm text-gray-700">{a.isi}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <div className="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-center">

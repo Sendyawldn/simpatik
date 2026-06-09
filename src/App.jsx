@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import MasterData from './pages/admin/MasterData';
+import Pengumuman from './pages/admin/Pengumuman';
 import GuruDashboard from './pages/guru/Dashboard';
 import RekapNilai from './pages/guru/RekapNilai';
 import OrangTuaDashboard from './pages/orangtua/Dashboard';
@@ -19,7 +20,7 @@ function App() {
         <Route element={<Layout allowedRoles={['ADMIN']} />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/master" element={<MasterData />} />
-          <Route path="/admin/pengumuman" element={<div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100"><h2 className="text-xl font-semibold">Pengumuman</h2><p className="mt-2 text-gray-500">Halaman ini sedang dalam pengembangan.</p></div>} />
+          <Route path="/admin/pengumuman" element={<Pengumuman />} />
         </Route>
 
         {/* Guru Routes */}
