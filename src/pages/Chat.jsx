@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { messages as initialMessages, users } from '../data/dummyData';
-import { Send, Search, UserCircle, MoreVertical } from 'lucide-react';
+import { Send, Search, UserCircle, MoreVertical, ArrowLeft } from 'lucide-react';
 
 const Chat = () => {
   const [messages, setMessages] = useState(initialMessages);
@@ -12,7 +12,7 @@ const Chat = () => {
   
   // Generate mock contacts to simulate WhatsApp Web feel
   const [contacts, setContacts] = useState([]);
-  const [activeContactId, setActiveContactId] = useState('');
+  const [activeContactId, setActiveContactId] = useState(null); // start null for mobile view
   const [searchContact, setSearchContact] = useState('');
 
   useEffect(() => {
@@ -37,7 +37,9 @@ const Chat = () => {
 
     const allContacts = [...realContacts, ...dummyContacts];
     setContacts(allContacts);
-    if (allContacts.length > 0) {
+    
+    // On desktop, auto select first contact
+    if (window.innerWidth >= 768 && allContacts.length > 0) {
       setActiveContactId(allContacts[0].id);
     }
   }, [isGuru]);
@@ -73,8 +75,8 @@ const Chat = () => {
   return (
     <div className="bg-white shadow-sm border border-gray-200 rounded-xl flex h-[calc(100vh-140px)] overflow-hidden">
       
-      {/* LEFT PANE - Sidebar Contacts */}
-      <div className="w-1/3 md:w-80 border-r border-gray-200 flex flex-col bg-white">
+      {/* LEFT PANE - Sidebar Contacts (Visible on mobile if NO contact selected, visible on desktop always) */}
+      <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} w-full md:w-80 border-r border-gray-200 flex-col bg-white`}>
         {/* Profile / Header */}
         <div className="bg-gray-50 p-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -110,7 +112,7 @@ const Chat = () => {
             <div 
               key={contact.id}
               onClick={() => setActiveContactId(contact.id)}
-              className={`flex items-center p-3 cursor-pointer border-b border-gray-100 transition-colors ${activeContactId === contact.id ? 'bg-indigo-50' : 'hover:bg-gray-50'}`}
+              className={`flex items-center p-3 cursor-pointer border-b border-gray-100 transition-colors ${activeContactId === contact.id ? 'bg-indigo-50 hidden md:flex' : 'hover:bg-gray-50'}`}
             >
               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0 flex items-center justify-center text-gray-600 font-semibold text-lg">
                 {contact.nama.charAt(0)}
@@ -127,75 +129,85 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* RIGHT PANE - Chat Area */}
-      {activeContactId ? (
-        <div className="flex-1 flex flex-col bg-[#efeae2]">
-          {/* Header */}
-          <div className="bg-white p-3 flex items-center border-b border-gray-200 shadow-sm z-10">
-            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
-              {activeContact?.nama?.charAt(0)}
+      {/* RIGHT PANE - Chat Area (Visible on mobile if contact selected, visible on desktop always) */}
+      <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-[#efeae2]`}>
+        {activeContactId ? (
+          <>
+            {/* Header */}
+            <div className="bg-white p-3 flex items-center border-b border-gray-200 shadow-sm z-10">
+              {/* Back Button (Mobile Only) */}
+              <button 
+                className="md:hidden mr-3 text-gray-600 hover:text-gray-900"
+                onClick={() => setActiveContactId(null)}
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              
+              <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
+                {activeContact?.nama?.charAt(0)}
+              </div>
+              <div className="ml-4">
+                <h3 className="text-md font-semibold text-gray-800">{activeContact?.nama}</h3>
+                <p className="text-xs text-gray-500">{otherRoleName}</p>
+              </div>
             </div>
-            <div className="ml-4">
-              <h3 className="text-md font-semibold text-gray-800">{activeContact?.nama}</h3>
-              <p className="text-xs text-gray-500">{otherRoleName}</p>
-            </div>
-          </div>
 
-          {/* Messages */}
-          <div className="flex-1 p-6 overflow-y-auto flex flex-col space-y-3" style={{ backgroundImage: "url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png')", backgroundSize: 'contain', opacity: 0.9 }}>
-            {/* Simulation specific: show a welcome message for new contacts */}
-            <div className="flex justify-center mb-4">
-              <span className="bg-yellow-100 text-yellow-800 text-xs px-3 py-1 rounded-lg shadow-sm">
-                Pesan terenkripsi end-to-end secara simulasi.
-              </span>
-            </div>
+            {/* Messages */}
+            <div className="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col space-y-3" style={{ backgroundImage: "url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png')", backgroundSize: 'contain', opacity: 0.9 }}>
+              {/* Simulation specific: show a welcome message for new contacts */}
+              <div className="flex justify-center mb-4">
+                <span className="bg-yellow-100 text-yellow-800 text-[10px] md:text-xs px-3 py-1 rounded-lg shadow-sm text-center">
+                  Pesan terenkripsi end-to-end secara simulasi.
+                </span>
+              </div>
 
-            {currentChatMessages.map((msg) => {
-              const isMine = msg.pengirim === currentUser.id;
-              return (
-                <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] px-3 py-2 shadow-sm relative ${
-                    isMine 
-                      ? 'bg-[#d9fdd3] text-gray-800 rounded-lg rounded-tr-none' 
-                      : 'bg-white text-gray-800 rounded-lg rounded-tl-none'
-                  }`}>
-                    <p className="text-sm leading-relaxed pr-8">{msg.isi}</p>
-                    <span className="text-[10px] text-gray-500 absolute bottom-1 right-2">
-                      {msg.tanggal.length > 5 ? '12:00' : msg.tanggal}
-                    </span>
+              {currentChatMessages.map((msg) => {
+                const isMine = msg.pengirim === currentUser.id;
+                return (
+                  <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] md:max-w-[75%] px-3 py-2 shadow-sm relative ${
+                      isMine 
+                        ? 'bg-[#d9fdd3] text-gray-800 rounded-lg rounded-tr-none' 
+                        : 'bg-white text-gray-800 rounded-lg rounded-tl-none'
+                    }`}>
+                      <p className="text-sm leading-relaxed pr-10">{msg.isi}</p>
+                      <span className="text-[10px] text-gray-500 absolute bottom-1 right-2">
+                        {msg.tanggal.length > 5 ? '12:00' : msg.tanggal}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* Input Area */}
-          <div className="p-3 bg-gray-100 flex items-center gap-2">
-            <input
-              type="text"
-              className="flex-1 border-none rounded-lg px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-0"
-              placeholder="Ketik pesan..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend(e)}
-            />
-            <button
-              onClick={handleSend}
-              className="bg-teal-600 text-white rounded-full p-2 h-10 w-10 flex items-center justify-center hover:bg-teal-700 transition-colors shadow-sm"
-            >
-              <Send className="w-5 h-5 ml-0.5" />
-            </button>
+            {/* Input Area */}
+            <div className="p-2 md:p-3 bg-gray-100 flex items-center gap-2">
+              <input
+                type="text"
+                className="flex-1 border-none rounded-full md:rounded-lg px-4 py-2 md:py-3 text-sm shadow-sm focus:outline-none focus:ring-0"
+                placeholder="Ketik pesan..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend(e)}
+              />
+              <button
+                onClick={handleSend}
+                className="bg-teal-600 text-white rounded-full p-2 h-10 w-10 flex items-center justify-center hover:bg-teal-700 transition-colors shadow-sm"
+              >
+                <Send className="w-5 h-5 ml-0.5" />
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center bg-gray-50">
+            <div className="h-32 w-32 bg-gray-200 rounded-full flex items-center justify-center mb-6">
+              <UserCircle className="h-16 w-16 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-medium text-gray-700">Pilih kontak untuk mengobrol</h2>
+            <p className="text-gray-500 mt-2 text-center max-w-md px-4">Kirim dan terima pesan dari guru atau orang tua siswa melalui sistem SIMPATIK.</p>
           </div>
-        </div>
-      ) : (
-        <div className="flex-1 flex flex-col items-center justify-center bg-gray-50">
-          <div className="h-32 w-32 bg-gray-200 rounded-full flex items-center justify-center mb-6">
-            <UserCircle className="h-16 w-16 text-gray-400" />
-          </div>
-          <h2 className="text-xl font-medium text-gray-700">Pilih kontak untuk mulai mengobrol</h2>
-          <p className="text-gray-500 mt-2 text-center max-w-md">Kirim dan terima pesan dari guru atau orang tua siswa melalui sistem SIMPATIK.</p>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
