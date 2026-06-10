@@ -57,26 +57,42 @@ students.slice(1).forEach(student => {
   });
 });
 
-export const attendance = [
-  { id: "A01", id_siswa: "S01", tanggal: "2023-10-01", status: "Hadir" },
-  { id: "A02", id_siswa: "S01", tanggal: "2023-10-02", status: "Hadir" },
-  { id: "A03", id_siswa: "S01", tanggal: "2023-10-03", status: "Sakit" },
-  { id: "A04", id_siswa: "S01", tanggal: "2023-10-04", status: "Hadir" },
-  { id: "A05", id_siswa: "S01", tanggal: "2023-10-05", status: "Hadir" },
-  { id: "A06", id_siswa: "S01", tanggal: "2023-10-06", status: "Hadir" },
-  { id: "A07", id_siswa: "S01", tanggal: "2023-10-07", status: "Izin" },
-  { id: "A08", id_siswa: "S01", tanggal: "2023-10-08", status: "Hadir" },
-  { id: "A09", id_siswa: "S01", tanggal: "2023-10-09", status: "Hadir" },
-  { id: "A10", id_siswa: "S01", tanggal: "2023-10-10", status: "Hadir" },
-];
+let attendanceIdCounter = 1;
+export const attendance = [];
 
-// Add attendance for other students
-students.slice(1).forEach((student, index) => {
+// Generate random attendance for S01 across Semester 1 to 6
+for (let sem = 1; sem <= 6; sem++) {
+  for (let day = 1; day <= 10; day++) {
+    // Determine random status (mostly Hadir)
+    const randomVal = Math.random();
+    let status = "Hadir";
+    if (randomVal > 0.95) status = "Alpa";
+    else if (randomVal > 0.90) status = "Izin";
+    else if (randomVal > 0.85) status = "Sakit";
+
+    // Format a pseudo-date to group them visually (e.g., month based on semester)
+    // Sem 1 -> Month 01, Sem 2 -> Month 02, etc.
+    const month = sem.toString().padStart(2, '0');
+    const dayStr = day.toString().padStart(2, '0');
+
+    attendance.push({
+      id: `A${attendanceIdCounter++}`,
+      id_siswa: "S01",
+      tanggal: `2023-${month}-${dayStr}`,
+      status: status,
+      semester: sem
+    });
+  }
+}
+
+// Add attendance for other students for Semester 1
+students.slice(1).forEach(student => {
   attendance.push({
-    id: `A_OTHER_${index}`,
+    id: `A${attendanceIdCounter++}`,
     id_siswa: student.id,
-    tanggal: "2023-10-10",
-    status: Math.random() > 0.1 ? "Hadir" : "Sakit"
+    tanggal: "2023-01-01",
+    status: Math.random() > 0.1 ? "Hadir" : "Sakit",
+    semester: 1
   });
 });
 
