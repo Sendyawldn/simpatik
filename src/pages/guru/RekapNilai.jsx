@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { students, grades as initialGrades, attendance as initialAttendance } from '../../data/dummyData';
-import { Save, BookOpen, UserCheck, CheckCircle, MessageSquare } from 'lucide-react';
+import { Save, BookOpen, UserCheck, CheckCircle, MessageSquare, Filter } from 'lucide-react';
 
 const RekapNilai = () => {
   const [activeTab, setActiveTab] = useState('nilai');
@@ -12,7 +12,9 @@ const RekapNilai = () => {
 
   // Bulk Input State - Nilai
   const [bulkMapel, setBulkMapel] = useState('');
+  const [bulkSemester, setBulkSemester] = useState('1');
   const [bulkGrades, setBulkGrades] = useState({});
+  const [historySemesterFilter, setHistorySemesterFilter] = useState('Semua');
 
   // Bulk Input State - Absen
   const [bulkDate, setBulkDate] = useState(new Date().toISOString().split('T')[0]);
@@ -64,7 +66,7 @@ const RekapNilai = () => {
           id_siswa: studentId,
           mapel: bulkMapel,
           nilai: parseInt(scoreStr),
-          semester: 1
+          semester: parseInt(bulkSemester)
         });
       }
     });
@@ -79,7 +81,7 @@ const RekapNilai = () => {
     // Reset form
     setBulkMapel('');
     setBulkGrades({});
-    showSuccessMessage(`Berhasil menyimpan ${newGrades.length} nilai pelajaran ${bulkMapel}.`);
+    showSuccessMessage(`Berhasil menyimpan ${newGrades.length} nilai pelajaran ${bulkMapel} untuk Semester ${bulkSemester}.`);
   };
 
   const handleSaveBulkAbsen = (e) => {
@@ -136,6 +138,10 @@ const RekapNilai = () => {
     const student = students.find(s => s.id === id);
     return student ? student.nama : 'Unknown';
   };
+
+  const filteredGrades = historySemesterFilter === 'Semua' 
+    ? grades 
+    : grades.filter(g => g.semester === parseInt(historySemesterFilter));
 
   return (
     <div className="space-y-6 pb-20 md:pb-6">
@@ -200,15 +206,32 @@ const RekapNilai = () => {
         {/* Tab Content: Nilai */}
         {activeTab === 'nilai' && (
           <div className="p-4 sm:p-6">
-            <div className="mb-6 bg-teal-50 border border-teal-100 rounded-lg p-4">
-              <label className="block text-sm font-semibold text-teal-900 mb-2">Mata Pelajaran untuk Diinput</label>
-              <input 
-                type="text" 
-                placeholder="Misal: Matematika, Bahasa Indonesia..." 
-                className="w-full md:w-1/2 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
-                value={bulkMapel}
-                onChange={e => setBulkMapel(e.target.value)}
-              />
+            <div className="mb-6 bg-teal-50 border border-teal-100 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Mata Pelajaran untuk Diinput</label>
+                <input 
+                  type="text" 
+                  placeholder="Misal: Matematika, Bahasa Indonesia..." 
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                  value={bulkMapel}
+                  onChange={e => setBulkMapel(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Pilih Semester</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm bg-white"
+                  value={bulkSemester}
+                  onChange={e => setBulkSemester(e.target.value)}
+                >
+                  <option value="1">Semester 1 (Ganjil)</option>
+                  <option value="2">Semester 2 (Genap)</option>
+                  <option value="3">Semester 3 (Ganjil)</option>
+                  <option value="4">Semester 4 (Genap)</option>
+                  <option value="5">Semester 5 (Ganjil)</option>
+                  <option value="6">Semester 6 (Genap)</option>
+                </select>
+              </div>
             </div>
 
             <form onSubmit={handleSaveBulkNilai}>
@@ -251,6 +274,65 @@ const RekapNilai = () => {
                 </button>
               </div>
             </form>
+
+            {/* Riwayat Data */}
+            <div className="mt-12">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                <h3 className="text-lg font-medium text-gray-900">Riwayat Nilai Tersimpan</h3>
+                <div className="flex items-center bg-white border border-gray-300 rounded-md shadow-sm">
+                  <span className="pl-3 text-gray-500">
+                    <Filter className="h-4 w-4" />
+                  </span>
+                  <select 
+                    className="border-none focus:ring-0 py-2 pl-2 pr-8 sm:text-sm text-gray-700 rounded-md"
+                    value={historySemesterFilter}
+                    onChange={e => setHistorySemesterFilter(e.target.value)}
+                  >
+                    <option value="Semua">Semua Semester</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                    <option value="5">Semester 5</option>
+                    <option value="6">Semester 6</option>
+                  </select>
+                </div>
+              </div>
+              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredGrades.length > 0 ? (
+                      filteredGrades.slice().reverse().map((grade) => (
+                        <tr key={grade.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getStudentName(grade.id_siswa)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grade.mapel}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Semester {grade.semester}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">
+                            <span className={`px-2 py-1 rounded ${grade.nilai >= 75 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}`}>
+                              {grade.nilai}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="px-6 py-8 text-center text-sm text-gray-500">
+                          Tidak ada riwayat nilai untuk {historySemesterFilter === 'Semua' ? 'semua semester' : `Semester ${historySemesterFilter}`}.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
@@ -310,6 +392,43 @@ const RekapNilai = () => {
                 </button>
               </div>
             </form>
+
+            {/* Riwayat Data Absen */}
+            <div className="mt-12">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Riwayat Absensi Tersimpan</h3>
+              <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {attendances.slice().reverse().map((absen) => {
+                      let statusColor = 'bg-gray-100 text-gray-800';
+                      if (absen.status === 'Hadir') statusColor = 'bg-green-100 text-green-800';
+                      else if (absen.status === 'Sakit') statusColor = 'bg-yellow-100 text-yellow-800';
+                      else if (absen.status === 'Izin') statusColor = 'bg-blue-100 text-blue-800';
+                      else if (absen.status === 'Alpa') statusColor = 'bg-red-100 text-red-800';
+                      
+                      return (
+                        <tr key={absen.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{absen.tanggal}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getStudentName(absen.id_siswa)}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}`}>
+                              {absen.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 

@@ -11,7 +11,7 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
-import { grades, attendance, announcements as dummyAnnouncements } from '../../data/dummyData';
+import { grades as dummyGrades, attendance, announcements as dummyAnnouncements } from '../../data/dummyData';
 import { Bell, MessageSquare, Megaphone, Info } from 'lucide-react';
 
 ChartJS.register(
@@ -29,6 +29,10 @@ const OrangTuaDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const [announcements, setAnnouncements] = useState([]);
   const [behaviorNote, setBehaviorNote] = useState(null);
+  
+  // Custom states for grades to combine dummy and local storage
+  const [allGrades, setAllGrades] = useState(dummyGrades);
+  const [selectedSemester, setSelectedSemester] = useState('1');
 
   // In a real app, this is determined by user login.
   // For dummy data, we assume this OrangTua is the parent of "Andi" (S01).
@@ -48,7 +52,6 @@ const OrangTuaDashboard = () => {
     const savedNotes = localStorage.getItem('simpatik_behavior_notes');
     if (savedNotes) {
       const parsedNotes = JSON.parse(savedNotes);
-      // Find the most recent note for this child
       const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
       if (childNotes.length > 0) {
         setBehaviorNote(childNotes[0]);
@@ -56,13 +59,21 @@ const OrangTuaDashboard = () => {
     }
   }, []);
   
-  // Data dummy chart
+  // Use real-time local state for grades if they were added dynamically during simulation
+  // Since we simulated adding grades via React state in Guru dashboard but didn't save to localStorage, 
+  // they won't persist across refresh unless we use localStorage.
+  // To keep it simple, we'll just filter `allGrades` which defaults to dummyGrades.
+  // If we wanted to share state without a backend, we should use localStorage for grades too.
+  
+  // Filter grades for current child and selected semester
+  const childGrades = allGrades.filter(g => g.id_siswa === childId && g.semester === parseInt(selectedSemester));
+
   const gradeData = {
-    labels: grades.filter(g => g.id_siswa === childId).map(g => g.mapel),
+    labels: childGrades.map(g => g.mapel),
     datasets: [
       {
-        label: 'Nilai Semester 1',
-        data: grades.filter(g => g.id_siswa === childId).map(g => g.nilai),
+        label: `Nilai Semester ${selectedSemester}`,
+        data: childGrades.map(g => g.nilai),
         backgroundColor: 'rgba(79, 70, 229, 0.6)',
       },
     ],
@@ -137,10 +148,31 @@ const OrangTuaDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Grafik Nilai</h3>
-          <div className="h-64">
-            <Bar data={gradeData} options={{ maintainAspectRatio: false }} />
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">Grafik Nilai</h3>
+            <select 
+              className="text-sm border border-gray-300 rounded-lg py-1 px-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50"
+              value={selectedSemester}
+              onChange={e => setSelectedSemester(e.target.value)}
+            >
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+            </select>
+          </div>
+          
+          <div className="h-64 flex-1">
+            {childGrades.length > 0 ? (
+              <Bar data={gradeData} options={{ maintainAspectRatio: false }} />
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
+                Belum ada data nilai untuk Semester {selectedSemester}.
+              </div>
+            )}
           </div>
         </div>
 
