@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
 import { grades, attendance, announcements as dummyAnnouncements } from '../../data/dummyData';
-import { Bell, MessageSquare, Megaphone } from 'lucide-react';
+import { Bell, MessageSquare, Megaphone, Info } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -28,23 +28,41 @@ ChartJS.register(
 const OrangTuaDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const [announcements, setAnnouncements] = useState([]);
+  const [behaviorNote, setBehaviorNote] = useState(null);
+
+  // In a real app, this is determined by user login.
+  // For dummy data, we assume this OrangTua is the parent of "Andi" (S01).
+  const childId = 'S01'; 
+  const childName = 'Andi';
 
   useEffect(() => {
-    const saved = localStorage.getItem('simpatik_announcements');
-    if (saved) {
-      setAnnouncements(JSON.parse(saved));
+    // Load announcements
+    const savedAnnouncements = localStorage.getItem('simpatik_announcements');
+    if (savedAnnouncements) {
+      setAnnouncements(JSON.parse(savedAnnouncements));
     } else {
       setAnnouncements(dummyAnnouncements);
+    }
+
+    // Load behavior notes for the child
+    const savedNotes = localStorage.getItem('simpatik_behavior_notes');
+    if (savedNotes) {
+      const parsedNotes = JSON.parse(savedNotes);
+      // Find the most recent note for this child
+      const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
+      if (childNotes.length > 0) {
+        setBehaviorNote(childNotes[0]);
+      }
     }
   }, []);
   
   // Data dummy chart
   const gradeData = {
-    labels: grades.filter(g => g.id_siswa === 'S01').map(g => g.mapel),
+    labels: grades.filter(g => g.id_siswa === childId).map(g => g.mapel),
     datasets: [
       {
         label: 'Nilai Semester 1',
-        data: grades.filter(g => g.id_siswa === 'S01').map(g => g.nilai),
+        data: grades.filter(g => g.id_siswa === childId).map(g => g.nilai),
         backgroundColor: 'rgba(79, 70, 229, 0.6)',
       },
     ],
@@ -66,8 +84,8 @@ const OrangTuaDashboard = () => {
   return (
     <div className="space-y-6 pb-20 md:pb-6">
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
-        <h2 className="text-2xl font-bold">Halo, {currentUser.nama}</h2>
-        <p className="mt-1 opacity-90">Berikut adalah perkembangan anak Anda, Andi.</p>
+        <h2 className="text-2xl font-bold">Halo, {currentUser.nama || 'Orang Tua'}</h2>
+        <p className="mt-1 opacity-90">Berikut adalah perkembangan anak Anda, {childName}.</p>
       </div>
 
       {/* Pengumuman Section */}
@@ -89,6 +107,35 @@ const OrangTuaDashboard = () => {
         </div>
       )}
 
+      {/* Laporan Perilaku / Catatan Guru Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bell className="text-pink-500 w-5 h-5" />
+            <h3 className="text-lg font-semibold text-gray-800">Catatan Perilaku & Sikap</h3>
+          </div>
+        </div>
+        <div className="p-5 bg-pink-50/30">
+          {behaviorNote ? (
+            <div>
+              <p className="text-sm text-gray-800 italic bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                "{behaviorNote.catatan}"
+              </p>
+              <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
+                <span>Dari: {behaviorNote.guru}</span>
+                <span>{behaviorNote.tanggal} - {behaviorNote.waktu}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 text-gray-500">
+              <Info className="w-5 h-5 text-blue-400" />
+              <p className="text-sm">Belum ada catatan sikap terbaru dari guru untuk saat ini.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Grafik Nilai</h3>
@@ -102,17 +149,6 @@ const OrangTuaDashboard = () => {
           <div className="h-64">
             <Line data={attendanceData} options={{ maintainAspectRatio: false }} />
           </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-800">Catatan Guru</h3>
-          <Bell className="text-indigo-500 w-5 h-5" />
-        </div>
-        <div className="p-4 bg-indigo-50/50">
-          <p className="text-sm text-gray-700">"Andi sangat aktif di kelas hari ini dan berhasil menjawab beberapa pertanyaan matematika dengan baik." - Pak Budi</p>
-          <span className="text-xs text-gray-500 mt-2 block">Hari ini, 10:30 WIB</span>
         </div>
       </div>
       
