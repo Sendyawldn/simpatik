@@ -28,6 +28,7 @@ ChartJS.register(
 const OrangTuaDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const [announcements, setAnnouncements] = useState([]);
+  const [classAnnouncements, setClassAnnouncements] = useState([]);
   const [behaviorNote, setBehaviorNote] = useState(null);
   
   // Custom states for data to combine dummy and local storage
@@ -41,12 +42,22 @@ const OrangTuaDashboard = () => {
   const childName = 'Andi Wijaya';
 
   useEffect(() => {
-    // Load announcements
+    // Load school announcements
     const savedAnnouncements = localStorage.getItem('simpatik_announcements');
     if (savedAnnouncements) {
       setAnnouncements(JSON.parse(savedAnnouncements));
     } else {
       setAnnouncements(dummyAnnouncements);
+    }
+
+    // Load class announcements
+    const savedClassAnnouncements = localStorage.getItem('simpatik_class_announcements');
+    if (savedClassAnnouncements) {
+      setClassAnnouncements(JSON.parse(savedClassAnnouncements));
+    } else {
+      import('../../data/dummyData').then(mod => {
+        setClassAnnouncements(mod.classAnnouncements || []);
+      });
     }
 
     // Load behavior notes for the child
@@ -127,24 +138,49 @@ const OrangTuaDashboard = () => {
         </div>
       </div>
 
-      {/* Pengumuman Section */}
-      {announcements.length > 0 && (
-        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <Megaphone className="h-5 w-5 text-blue-600" />
-            <h3 className="text-md font-semibold text-blue-800">Pengumuman Sekolah</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Pengumuman Sekolah Section */}
+        {announcements.length > 0 && (
+          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <Megaphone className="h-5 w-5 text-blue-600" />
+              <h3 className="text-md font-semibold text-blue-800">Pengumuman Sekolah</h3>
+            </div>
+            <div className="space-y-3">
+              {announcements.slice(0, 2).map((a) => (
+                <div key={a.id} className="bg-white rounded-xl p-4 shadow-sm border border-blue-50">
+                  <h4 className="font-semibold text-gray-900">{a.judul}</h4>
+                  <p className="text-xs text-gray-400 mb-2">{a.tanggal}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{a.isi}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="space-y-3">
-            {announcements.slice(0, 2).map((a) => (
-              <div key={a.id} className="bg-white rounded-xl p-4 shadow-sm border border-blue-50">
-                <h4 className="font-semibold text-gray-900">{a.judul}</h4>
-                <p className="text-xs text-gray-400 mb-2">{a.tanggal}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{a.isi}</p>
-              </div>
-            ))}
+        )}
+
+        {/* Pengumuman Kelas Section */}
+        {classAnnouncements.length > 0 && (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <Info className="h-5 w-5 text-indigo-600" />
+              <h3 className="text-md font-semibold text-indigo-800">Pengumuman Kelas (Dari Guru)</h3>
+            </div>
+            <div className="space-y-3">
+              {classAnnouncements.slice(0, 2).map((a) => (
+                <div key={a.id} className="bg-white rounded-xl p-4 shadow-sm border border-indigo-50 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                  <h4 className="font-semibold text-gray-900">{a.judul}</h4>
+                  <div className="flex items-center justify-between mt-1 mb-2">
+                    <p className="text-xs text-gray-400">{a.tanggal}</p>
+                    <p className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">{a.guru}</p>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">{a.isi}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Laporan Perilaku / Catatan Guru Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">

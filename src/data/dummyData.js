@@ -28,10 +28,8 @@ const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggr
 let gradeIdCounter = 1;
 export const grades = [];
 
-// Generate random grades for S01 (Andi) across Semester 1 to 6
 for (let sem = 1; sem <= 6; sem++) {
   mapelList.forEach(mapel => {
-    // Generate score between 75 and 98
     const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75;
     grades.push({
       id: `N${gradeIdCounter++}`,
@@ -43,7 +41,6 @@ for (let sem = 1; sem <= 6; sem++) {
   });
 }
 
-// Generate some initial grades for other students (Semester 1)
 students.slice(1).forEach(student => {
   ["Matematika", "Bahasa Indonesia", "IPA"].forEach(mapel => {
     const score = Math.floor(Math.random() * (95 - 70 + 1)) + 70;
@@ -60,7 +57,6 @@ students.slice(1).forEach(student => {
 let attendanceIdCounter = 1;
 export const attendance = [];
 
-// Generate random attendance for S01 across Semester 1 to 6
 for (let sem = 1; sem <= 6; sem++) {
   for (let day = 1; day <= 10; day++) {
     const randomVal = Math.random();
@@ -82,7 +78,6 @@ for (let sem = 1; sem <= 6; sem++) {
   }
 }
 
-// Add attendance for other students for Semester 1
 students.slice(1).forEach(student => {
   attendance.push({
     id: `A${attendanceIdCounter++}`,
@@ -98,6 +93,11 @@ export const announcements = [
   { id: "P02", judul: "Rapat Wali Murid", tanggal: "2023-11-20", isi: "Mengundang Bapak/Ibu wali murid kelas 5 untuk hadir dalam rapat pengambilan rapor sisipan yang akan diselenggarakan pada hari Jumat, 24 November 2023 di aula sekolah." },
   { id: "P03", judul: "Kegiatan Ekstrakurikuler Wajib", tanggal: "2023-10-10", isi: "Mengingatkan kembali bahwa kegiatan ekstrakurikuler Pramuka wajib diikuti oleh seluruh siswa kelas 4 hingga kelas 6 setiap hari Sabtu pukul 08.00 - 10.00 WIB." },
   { id: "P04", judul: "Lomba Cerdas Cermat Tingkat Kota", tanggal: "2023-09-05", isi: "Sekolah kita akan berpartisipasi dalam Lomba Cerdas Cermat tingkat kota bulan depan. Seleksi tingkat sekolah akan dilaksanakan minggu ini." },
+];
+
+export const classAnnouncements = [
+  { id: "CP01", judul: "Pembayaran Uang Kas Kelas", tanggal: "2023-10-15", isi: "Mengingatkan kembali kepada Bapak/Ibu wali murid kelas 5A untuk melunasi iuran uang kas bulan Oktober sebesar Rp 20.000 paling lambat hari Jumat minggu ini.", guru: "Pak Budi Santoso" },
+  { id: "CP02", judul: "Membawa Alat Praktek Menggambar", tanggal: "2023-10-18", isi: "Mohon diingatkan kepada putra/putrinya untuk membawa buku gambar A3, krayon, dan pensil warna untuk tugas praktek Seni Budaya besok pagi.", guru: "Pak Budi Santoso" }
 ];
 
 export const messages = [
