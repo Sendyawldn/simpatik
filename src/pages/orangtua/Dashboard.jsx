@@ -172,19 +172,19 @@ const OrangTuaDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Grafik Nilai */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">Capaian Akademik</h3>
             <span className="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded-md">Semester {selectedSemester}</span>
           </div>
           
-          <div className="h-64 flex-1">
+          <div className="h-72 relative w-full">
             {childGrades.length > 0 ? (
               <Bar data={gradeData} options={{ maintainAspectRatio: false }} />
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
+              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
                 Belum ada data nilai untuk Semester {selectedSemester}.
               </div>
             )}
@@ -192,17 +192,17 @@ const OrangTuaDashboard = () => {
         </div>
 
         {/* Grafik Kehadiran */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">Rekapitulasi Kehadiran</h3>
             <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-md">Semester {selectedSemester}</span>
           </div>
           
-          <div className="h-64 flex-1">
+          <div className="h-72 relative w-full">
             {childAttendance.length > 0 ? (
               <Bar data={attendanceData} options={{ maintainAspectRatio: false }} />
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
+              <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
                 Belum ada data absensi untuk Semester {selectedSemester}.
               </div>
             )}
