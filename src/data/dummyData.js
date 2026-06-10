@@ -63,15 +63,12 @@ export const attendance = [];
 // Generate random attendance for S01 across Semester 1 to 6
 for (let sem = 1; sem <= 6; sem++) {
   for (let day = 1; day <= 10; day++) {
-    // Determine random status (mostly Hadir)
     const randomVal = Math.random();
     let status = "Hadir";
     if (randomVal > 0.95) status = "Alpa";
     else if (randomVal > 0.90) status = "Izin";
     else if (randomVal > 0.85) status = "Sakit";
 
-    // Format a pseudo-date to group them visually (e.g., month based on semester)
-    // Sem 1 -> Month 01, Sem 2 -> Month 02, etc.
     const month = sem.toString().padStart(2, '0');
     const dayStr = day.toString().padStart(2, '0');
 
@@ -107,4 +104,31 @@ export const messages = [
   { id: "M01", pengirim: "U02", penerima: "U03", tanggal: "2023-10-05 09:30", isi: "Selamat pagi Bapak/Ibu. Andi hari ini sangat aktif di kelas, terutama saat pelajaran Matematika." },
   { id: "M02", pengirim: "U03", penerima: "U02", tanggal: "2023-10-05 10:15", isi: "Selamat pagi Pak Budi. Syukurlah, terima kasih atas bimbingannya selalu." },
   { id: "M03", pengirim: "U02", penerima: "U03", tanggal: "2023-10-05 10:20", isi: "Sama-sama Bapak/Ibu. Mohon terus didukung belajar di rumahnya ya." }
+];
+
+export const behaviorNotes = [
+  {
+    id: "B01",
+    id_siswa: "S01",
+    tanggal: "15 Oktober 2023",
+    waktu: "10:30",
+    catatan: "Andi hari ini sangat antusias saat pelajaran IPA. Ia berhasil memimpin kelompoknya untuk menyelesaikan tugas praktek dengan nilai sempurna. Namun, mohon tetap dinasihati agar tidak terlalu sering mengobrol dengan teman sebangkunya saat sedang menyimak penjelasan.",
+    guru: "Bapak Budi Santoso"
+  },
+  {
+    id: "B02",
+    id_siswa: "S02",
+    tanggal: "14 Oktober 2023",
+    waktu: "13:15",
+    catatan: "Budi menunjukkan kemajuan yang sangat pesat dalam kedisiplinan mengumpulkan tugas tepat waktu minggu ini. Tolong pertahankan semangat belajarnya di rumah ya, Bapak/Ibu.",
+    guru: "Ibu Siti Aminah"
+  },
+  {
+    id: "B03",
+    id_siswa: "S03",
+    tanggal: "10 Oktober 2023",
+    waktu: "09:00",
+    catatan: "Citra hari ini terlihat sedikit kurang sehat dan tertidur beberapa kali saat pelajaran berlangsung. Saya sudah mengarahkannya ke UKS sementara. Mohon dipantau jam tidurnya di rumah.",
+    guru: "Bapak Budi Santoso"
+  }
 ];

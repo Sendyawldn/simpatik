@@ -11,7 +11,7 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
-import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements } from '../../data/dummyData';
+import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements, behaviorNotes as dummyBehaviorNotes } from '../../data/dummyData';
 import { Bell, MessageSquare, Megaphone, Info } from 'lucide-react';
 
 ChartJS.register(
@@ -51,12 +51,15 @@ const OrangTuaDashboard = () => {
 
     // Load behavior notes for the child
     const savedNotes = localStorage.getItem('simpatik_behavior_notes');
+    let parsedNotes = [];
     if (savedNotes) {
-      const parsedNotes = JSON.parse(savedNotes);
-      const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
-      if (childNotes.length > 0) {
-        setBehaviorNote(childNotes[0]);
-      }
+      parsedNotes = JSON.parse(savedNotes);
+    } else {
+      parsedNotes = dummyBehaviorNotes;
+    }
+    const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
+    if (childNotes.length > 0) {
+      setBehaviorNote(childNotes[0]);
     }
   }, []);
   

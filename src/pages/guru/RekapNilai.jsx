@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { students, grades as initialGrades, attendance as initialAttendance } from '../../data/dummyData';
+import { students, grades as initialGrades, attendance as initialAttendance, behaviorNotes as dummyBehaviorNotes } from '../../data/dummyData';
 import { Save, BookOpen, UserCheck, CheckCircle, MessageSquare, Filter } from 'lucide-react';
 
 const RekapNilai = () => {
@@ -41,6 +41,8 @@ const RekapNilai = () => {
     const savedNotes = localStorage.getItem('simpatik_behavior_notes');
     if (savedNotes) {
       setBehaviorNotes(JSON.parse(savedNotes));
+    } else {
+      setBehaviorNotes(dummyBehaviorNotes);
     }
   }, []);
 
