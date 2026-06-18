@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { students as initialStudents, users as initialUsers } from '../../data/dummyData';
+import { students as initialStudents, users as initialUsers, mapelList } from '../../data/dummyData';
 import { Plus, Edit2, Trash2, Search, Users, GraduationCap } from 'lucide-react';
 
 const MasterData = () => {
@@ -15,7 +15,7 @@ const MasterData = () => {
   const [isGuruModalOpen, setIsGuruModalOpen] = useState(false);
   
   const [siswaFormData, setSiswaFormData] = useState({ nis: '', nama: '', kelas: '', id_orangtua: '' });
-  const [guruFormData, setGuruFormData] = useState({ nuptk: '', nama: '' });
+  const [guruFormData, setGuruFormData] = useState({ nuptk: '', nama: '', mapel: '' });
 
   // Filtering
   let finalStudents = students.filter(s => 
@@ -72,11 +72,12 @@ const MasterData = () => {
       id: `U${Date.now()}`,
       role: 'GURU',
       nuptk: guruFormData.nuptk,
-      nama: guruFormData.nama
+      nama: guruFormData.nama,
+      mapel: guruFormData.mapel
     };
     setTeachers([...teachers, newTeacher]);
     setIsGuruModalOpen(false);
-    setGuruFormData({ nuptk: '', nama: '' });
+    setGuruFormData({ nuptk: '', nama: '', mapel: '' });
   };
 
   return (
@@ -234,6 +235,7 @@ const MasterData = () => {
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NUPTK</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                 </tr>
               </thead>
@@ -243,6 +245,11 @@ const MasterData = () => {
                     <tr key={teacher.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{teacher.nuptk || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{teacher.nama}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {teacher.mapel || 'Guru Kelas'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button className="text-teal-600 hover:text-teal-900 mr-3">
                           <Edit2 className="h-4 w-4 inline" />
@@ -333,6 +340,16 @@ const MasterData = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Nama Guru</label>
                       <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm" value={guruFormData.nama} onChange={e => setGuruFormData({...guruFormData, nama: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Mata Pelajaran yang Diajarkan</label>
+                      <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm" value={guruFormData.mapel} onChange={e => setGuruFormData({...guruFormData, mapel: e.target.value})}>
+                        <option value="">Pilih Mata Pelajaran</option>
+                        <option value="Guru Kelas">Guru Kelas</option>
+                        {mapelList.map((m, i) => (
+                          <option key={i} value={m}>{m}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>

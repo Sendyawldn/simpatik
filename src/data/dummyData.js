@@ -1,8 +1,8 @@
 export const users = [
   { id: "U01", nama: "Admin Sekolah", role: "ADMIN" },
-  { id: "U02", nama: "Budi Santoso", role: "GURU" },
-  { id: "U02B", nama: "Siti Aminah", role: "GURU" },
-  { id: "U02C", nama: "Ahmad Dahlan", role: "GURU" },
+  { id: "U02", nama: "Budi Santoso", role: "GURU", mapel: "Matematika" },
+  { id: "U02B", nama: "Siti Aminah", role: "GURU", mapel: "Bahasa Indonesia" },
+  { id: "U02C", nama: "Ahmad Dahlan", role: "GURU", mapel: "IPA" },
   { id: "U03", nama: "Bapak/Ibu Andi", role: "ORANG_TUA" },
   { id: "U04", nama: "Bapak/Ibu Budi", role: "ORANG_TUA" },
   { id: "U05", nama: "Bapak/Ibu Citra", role: "ORANG_TUA" }
@@ -23,7 +23,7 @@ export const students = [
   { id: "S12", nis: "1022", nama: "Lestari Ningsih", kelas: "6", id_orangtua: "U14" },
 ];
 
-const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggris", "PKn", "Seni Budaya", "PJOK"];
+export const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggris", "PKn", "Seni Budaya", "PJOK"];
 
 let gradeIdCounter = 1;
 export const grades = [];
