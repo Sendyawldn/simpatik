@@ -8,13 +8,7 @@ const Pengumuman = () => {
   const [formData, setFormData] = useState({ judul: '', isi: '' });
 
   useEffect(() => {
-    const saved = localStorage.getItem('simpatik_announcements');
-    if (saved) {
-      setAnnouncements(JSON.parse(saved));
-    } else {
-      setAnnouncements(dummyAnnouncements);
-      localStorage.setItem('simpatik_announcements', JSON.stringify(dummyAnnouncements));
-    }
+    setAnnouncements(dummyAnnouncements);
   }, []);
 
   const handleSave = (e) => {
@@ -27,7 +21,6 @@ const Pengumuman = () => {
     };
     const updated = [newAnnouncement, ...announcements];
     setAnnouncements(updated);
-    localStorage.setItem('simpatik_announcements', JSON.stringify(updated));
     setIsModalOpen(false);
     setFormData({ judul: '', isi: '' });
   };
@@ -36,7 +29,6 @@ const Pengumuman = () => {
     if (window.confirm('Hapus pengumuman ini?')) {
       const updated = announcements.filter(a => a.id !== id);
       setAnnouncements(updated);
-      localStorage.setItem('simpatik_announcements', JSON.stringify(updated));
     }
   };
 

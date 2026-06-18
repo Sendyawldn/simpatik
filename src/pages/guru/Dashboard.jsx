@@ -12,20 +12,10 @@ const GuruDashboard = () => {
 
   useEffect(() => {
     // School announcements
-    const saved = localStorage.getItem('simpatik_announcements');
-    if (saved) {
-      setAnnouncements(JSON.parse(saved));
-    } else {
-      setAnnouncements(dummyAnnouncements);
-    }
+    setAnnouncements(dummyAnnouncements);
 
     // Class announcements
-    const savedClass = localStorage.getItem('simpatik_class_announcements');
-    if (savedClass) {
-      setClassAnnouncements(JSON.parse(savedClass));
-    } else {
-      setClassAnnouncements(dummyClassAnnouncements);
-    }
+    setClassAnnouncements(dummyClassAnnouncements);
   }, []);
 
   const handlePostAnnouncement = (e) => {
@@ -42,7 +32,6 @@ const GuruDashboard = () => {
 
     const updated = [newObj, ...classAnnouncements];
     setClassAnnouncements(updated);
-    localStorage.setItem('simpatik_class_announcements', JSON.stringify(updated));
     setNewAnnouncement({ judul: '', isi: '' });
 
     setSuccessMsg('Pengumuman kelas berhasil dipublikasikan ke Orang Tua.');

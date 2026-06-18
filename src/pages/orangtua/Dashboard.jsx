@@ -46,31 +46,15 @@ const OrangTuaDashboard = () => {
 
   useEffect(() => {
     // Load school announcements
-    const savedAnnouncements = localStorage.getItem('simpatik_announcements');
-    if (savedAnnouncements) {
-      setAnnouncements(JSON.parse(savedAnnouncements));
-    } else {
-      setAnnouncements(dummyAnnouncements);
-    }
+    setAnnouncements(dummyAnnouncements);
 
     // Load class announcements
-    const savedClassAnnouncements = localStorage.getItem('simpatik_class_announcements');
-    if (savedClassAnnouncements) {
-      setClassAnnouncements(JSON.parse(savedClassAnnouncements));
-    } else {
-      import('../../data/dummyData').then(mod => {
-        setClassAnnouncements(mod.classAnnouncements || []);
-      });
-    }
+    import('../../data/dummyData').then(mod => {
+      setClassAnnouncements(mod.classAnnouncements || []);
+    });
 
     // Load behavior notes for the child
-    const savedNotes = localStorage.getItem('simpatik_behavior_notes');
-    let parsedNotes = [];
-    if (savedNotes) {
-      parsedNotes = JSON.parse(savedNotes);
-    } else {
-      parsedNotes = dummyBehaviorNotes;
-    }
+    const parsedNotes = dummyBehaviorNotes;
     const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
     if (childNotes.length > 0) {
       setBehaviorNote(childNotes[0]);
@@ -79,18 +63,10 @@ const OrangTuaDashboard = () => {
     }
 
     // Load Grades
-    const savedGrades = localStorage.getItem('simpatik_grades');
-    if (savedGrades) {
-      const parsedGrades = JSON.parse(savedGrades);
-      setAllGrades([...dummyGrades, ...parsedGrades]);
-    }
+    setAllGrades(dummyGrades);
 
     // Load Attendance
-    const savedAttendance = localStorage.getItem('simpatik_attendance');
-    if (savedAttendance) {
-      const parsedAttendance = JSON.parse(savedAttendance);
-      setAllAttendance([...dummyAttendance, ...parsedAttendance]);
-    }
+    setAllAttendance(dummyAttendance);
   }, [childId]);
   
   // Filter grades and attendance for current child and selected semester

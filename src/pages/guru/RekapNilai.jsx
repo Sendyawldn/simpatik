@@ -45,25 +45,14 @@ const RekapNilai = () => {
     });
     setBulkAbsen(initialBulkAbsen);
 
-    // Load Catatan Sikap from LocalStorage
-    const savedNotes = localStorage.getItem('simpatik_behavior_notes');
-    if (savedNotes) {
-      setBehaviorNotes(JSON.parse(savedNotes));
-    } else {
-      setBehaviorNotes(dummyBehaviorNotes);
-    }
+    // Load Catatan Sikap from dummy data
+    setBehaviorNotes(dummyBehaviorNotes);
 
-    // Load Grades from LocalStorage
-    const savedGrades = localStorage.getItem('simpatik_grades');
-    if (savedGrades) {
-      setGrades([...initialGrades, ...JSON.parse(savedGrades)]);
-    }
+    // Load Grades from dummy data
+    setGrades([...initialGrades]);
 
-    // Load Attendance from LocalStorage
-    const savedAttendance = localStorage.getItem('simpatik_attendance');
-    if (savedAttendance) {
-      setAttendances([...initialAttendance, ...JSON.parse(savedAttendance)]);
-    }
+    // Load Attendance from dummy data
+    setAttendances([...initialAttendance]);
   }, []);
 
   const handleGradeChange = (studentId, value) => {
@@ -103,11 +92,6 @@ const RekapNilai = () => {
     }
 
     setGrades([...grades, ...newGrades]);
-
-    // Simpan ke localStorage
-    const existingGrades = JSON.parse(localStorage.getItem('simpatik_grades') || '[]');
-    const updatedGrades = [...existingGrades, ...newGrades];
-    localStorage.setItem('simpatik_grades', JSON.stringify(updatedGrades));
     
     // Reset form
     setBulkMapel('');
@@ -132,11 +116,6 @@ const RekapNilai = () => {
     });
 
     setAttendances([...attendances, ...newAttendances]);
-
-    // Simpan ke localStorage
-    const existingAttendance = JSON.parse(localStorage.getItem('simpatik_attendance') || '[]');
-    const updatedAttendance = [...existingAttendance, ...newAttendances];
-    localStorage.setItem('simpatik_attendance', JSON.stringify(updatedAttendance));
     
     // Reset form (keep default 'Hadir')
     const resetAbsen = {};
@@ -161,7 +140,6 @@ const RekapNilai = () => {
 
     const updatedNotes = [newNote, ...behaviorNotes];
     setBehaviorNotes(updatedNotes);
-    localStorage.setItem('simpatik_behavior_notes', JSON.stringify(updatedNotes));
 
     setSikapFormData({ id_siswa: '', catatan: '' });
     showSuccessMessage(`Catatan kelakuan berhasil dikirim ke orang tua siswa.`);
