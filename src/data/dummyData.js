@@ -9,18 +9,18 @@ export const users = [
 ];
 
 export const students = [
-  { id: "S01", nis: "1011", nama: "Andi Wijaya", kelas: "5", id_orangtua: "U03" },
-  { id: "S02", nis: "1012", nama: "Budi Gunawan", kelas: "5", id_orangtua: "U04" },
-  { id: "S03", nis: "1013", nama: "Citra Lestari", kelas: "5", id_orangtua: "U05" },
-  { id: "S04", nis: "1014", nama: "Dewi Sartika", kelas: "5", id_orangtua: "U06" },
-  { id: "S05", nis: "1015", nama: "Eko Prasetyo", kelas: "5", id_orangtua: "U07" },
-  { id: "S06", nis: "1016", nama: "Faisal Rahman", kelas: "5", id_orangtua: "U08" },
-  { id: "S07", nis: "1017", nama: "Gita Gutawa", kelas: "5", id_orangtua: "U09" },
-  { id: "S08", nis: "1018", nama: "Hendra Saputra", kelas: "5", id_orangtua: "U10" },
+  { id: "S01", nis: "1011", nama: "Andi Wijaya", kelas: "1", id_orangtua: "U03" },
+  { id: "S02", nis: "1012", nama: "Budi Gunawan", kelas: "1", id_orangtua: "U04" },
+  { id: "S03", nis: "1013", nama: "Citra Lestari", kelas: "2", id_orangtua: "U05" },
+  { id: "S04", nis: "1014", nama: "Dewi Sartika", kelas: "2", id_orangtua: "U06" },
+  { id: "S05", nis: "1015", nama: "Eko Prasetyo", kelas: "3", id_orangtua: "U07" },
+  { id: "S06", nis: "1016", nama: "Faisal Rahman", kelas: "3", id_orangtua: "U08" },
+  { id: "S07", nis: "1017", nama: "Gita Gutawa", kelas: "4", id_orangtua: "U09" },
+  { id: "S08", nis: "1018", nama: "Hendra Saputra", kelas: "4", id_orangtua: "U10" },
   { id: "S09", nis: "1019", nama: "Indah Permatasari", kelas: "5", id_orangtua: "U11" },
   { id: "S10", nis: "1020", nama: "Joko Anwar", kelas: "5", id_orangtua: "U12" },
-  { id: "S11", nis: "1021", nama: "Kiki Fatmala", kelas: "5", id_orangtua: "U13" },
-  { id: "S12", nis: "1022", nama: "Lestari Ningsih", kelas: "5", id_orangtua: "U14" },
+  { id: "S11", nis: "1021", nama: "Kiki Fatmala", kelas: "6", id_orangtua: "U13" },
+  { id: "S12", nis: "1022", nama: "Lestari Ningsih", kelas: "6", id_orangtua: "U14" },
 ];
 
 const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggris", "PKn", "Seni Budaya", "PJOK"];
@@ -28,11 +28,9 @@ const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggr
 let gradeIdCounter = 1;
 export const grades = [];
 
-// Generate random grades for S01 (Andi) across Kelas 1-6, Semester 1-2
 for (let k = 1; k <= 6; k++) {
   for (let sem = 1; sem <= 2; sem++) {
     mapelList.forEach(mapel => {
-      // Generate score between 75 and 98
       const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75;
       grades.push({
         id: `N${gradeIdCounter++}`,
@@ -46,7 +44,6 @@ for (let k = 1; k <= 6; k++) {
   }
 }
 
-// Generate some initial grades for other students (Kelas 5, Semester 1)
 students.slice(1).forEach(student => {
   ["Matematika", "Bahasa Indonesia", "IPA"].forEach(mapel => {
     const score = Math.floor(Math.random() * (95 - 70 + 1)) + 70;
@@ -55,7 +52,7 @@ students.slice(1).forEach(student => {
       id_siswa: student.id,
       mapel: mapel,
       nilai: score,
-      kelas: "5",
+      kelas: student.kelas,
       semester: "1"
     });
   });
@@ -64,7 +61,6 @@ students.slice(1).forEach(student => {
 let attendanceIdCounter = 1;
 export const attendance = [];
 
-// Generate random attendance for S01 across Kelas 1-6, Semester 1-2
 for (let k = 1; k <= 6; k++) {
   for (let sem = 1; sem <= 2; sem++) {
     for (let day = 1; day <= 10; day++) {
@@ -74,14 +70,13 @@ for (let k = 1; k <= 6; k++) {
       else if (randomVal > 0.90) status = "Izin";
       else if (randomVal > 0.85) status = "Sakit";
 
-      // Just for display, we don't strictly care about the exact date format matching kelas
       const month = sem === 1 ? '10' : '03'; 
       const dayStr = day.toString().padStart(2, '0');
 
       attendance.push({
         id: `A${attendanceIdCounter++}`,
         id_siswa: "S01",
-        tanggal: `202${k}-${month}-${dayStr}`, // Mock year progressing
+        tanggal: `202${k}-${month}-${dayStr}`,
         status: status,
         kelas: k.toString(),
         semester: sem.toString()
@@ -90,14 +85,13 @@ for (let k = 1; k <= 6; k++) {
   }
 }
 
-// Add attendance for other students for Kelas 5, Semester 1
 students.slice(1).forEach(student => {
   attendance.push({
     id: `A${attendanceIdCounter++}`,
     id_siswa: student.id,
-    tanggal: "2025-10-01",
+    tanggal: "2023-10-01",
     status: Math.random() > 0.1 ? "Hadir" : "Sakit",
-    kelas: "5",
+    kelas: student.kelas,
     semester: "1"
   });
 });

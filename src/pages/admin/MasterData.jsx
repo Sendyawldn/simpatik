@@ -8,6 +8,7 @@ const MasterData = () => {
   const [teachers, setTeachers] = useState(initialUsers.filter(u => u.role === 'GURU'));
   
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterKelas, setFilterKelas] = useState('Semua');
   
   // Modal states
   const [isSiswaModalOpen, setIsSiswaModalOpen] = useState(false);
@@ -17,10 +18,23 @@ const MasterData = () => {
   const [guruFormData, setGuruFormData] = useState({ nuptk: '', nama: '' });
 
   // Filtering
-  const filteredStudents = students.filter(s => 
+  let finalStudents = students.filter(s => 
     s.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
     s.nis.includes(searchTerm)
   );
+
+  if (filterKelas !== 'Semua') {
+    finalStudents = finalStudents.filter(s => s.kelas === filterKelas);
+  }
+
+  // Sort and group students by Kelas
+  finalStudents.sort((a, b) => a.kelas.localeCompare(b.kelas) || a.nama.localeCompare(b.nama));
+  
+  const groupedStudents = {};
+  finalStudents.forEach(s => {
+    if (!groupedStudents[s.kelas]) groupedStudents[s.kelas] = [];
+    groupedStudents[s.kelas].push(s);
+  });
   
   const filteredTeachers = teachers.filter(t => 
     t.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -126,7 +140,7 @@ const MasterData = () => {
           </nav>
         </div>
 
-        <div className="p-4 border-b border-gray-100 bg-gray-50 flex items-center">
+        <div className="p-4 border-b border-gray-100 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="relative w-full max-w-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
@@ -139,6 +153,24 @@ const MasterData = () => {
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
+          {activeTab === 'siswa' && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">Filter Kelas:</span>
+              <select 
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                value={filterKelas}
+                onChange={e => setFilterKelas(e.target.value)}
+              >
+                <option value="Semua">Semua Kelas</option>
+                <option value="1">Kelas 1</option>
+                <option value="2">Kelas 2</option>
+                <option value="3">Kelas 3</option>
+                <option value="4">Kelas 4</option>
+                <option value="5">Kelas 5</option>
+                <option value="6">Kelas 6</option>
+              </select>
+            </div>
+          )}
         </div>
 
         {/* Tabel Siswa */}
@@ -154,25 +186,35 @@ const MasterData = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStudents.length > 0 ? (
-                  filteredStudents.map((student) => (
-                    <tr key={student.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.nis}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.nama}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {student.kelas}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">
-                          <Edit2 className="h-4 w-4 inline" />
-                        </button>
-                        <button onClick={() => handleDeleteSiswa(student.id)} className="text-red-600 hover:text-red-900">
-                          <Trash2 className="h-4 w-4 inline" />
-                        </button>
-                      </td>
-                    </tr>
+                {Object.keys(groupedStudents).length > 0 ? (
+                  Object.keys(groupedStudents).map(kelas => (
+                    <React.Fragment key={kelas}>
+                      {/* Section Header untuk Kelas */}
+                      <tr className="bg-indigo-50">
+                        <td colSpan="4" className="px-6 py-2 text-left text-sm font-bold text-indigo-800">
+                          Kelas {kelas}
+                        </td>
+                      </tr>
+                      {groupedStudents[kelas].map((student) => (
+                        <tr key={student.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.nis}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.nama}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Kelas {student.kelas}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                              <Edit2 className="h-4 w-4 inline" />
+                            </button>
+                            <button onClick={() => handleDeleteSiswa(student.id)} className="text-red-600 hover:text-red-900">
+                              <Trash2 className="h-4 w-4 inline" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
                   ))
                 ) : (
                   <tr>
@@ -247,9 +289,12 @@ const MasterData = () => {
                       <label className="block text-sm font-medium text-gray-700">Kelas</label>
                       <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={siswaFormData.kelas} onChange={e => setSiswaFormData({...siswaFormData, kelas: e.target.value})}>
                         <option value="">Pilih Kelas</option>
-                        <option value="5A">5A</option>
-                        <option value="5B">5B</option>
-                        <option value="6A">6A</option>
+                        <option value="1">Kelas 1</option>
+                        <option value="2">Kelas 2</option>
+                        <option value="3">Kelas 3</option>
+                        <option value="4">Kelas 4</option>
+                        <option value="5">Kelas 5</option>
+                        <option value="6">Kelas 6</option>
                       </select>
                     </div>
                   </div>
