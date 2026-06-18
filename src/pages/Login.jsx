@@ -6,15 +6,24 @@ import { UserCircle, ShieldCheck, GraduationCap, Users, ArrowLeft } from 'lucide
 const Login = () => {
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState('');
 
   const handleLogin = (e) => {
     if (e) e.preventDefault();
-    const user = users.find(u => u.role === selectedRole);
+    let user;
+    if (selectedRole === 'ADMIN') {
+      user = users.find(u => u.role === 'ADMIN');
+    } else {
+      user = users.find(u => u.id === selectedUserId);
+    }
+
     if (user) {
       localStorage.setItem('currentUser', JSON.stringify(user));
       if (selectedRole === 'ADMIN') navigate('/admin');
       if (selectedRole === 'GURU') navigate('/guru');
       if (selectedRole === 'ORANG_TUA') navigate('/orang-tua');
+    } else {
+      alert("Silakan pilih akun terlebih dahulu!");
     }
   };
 
@@ -33,30 +42,40 @@ const Login = () => {
         </>
       );
     } else if (selectedRole === 'GURU') {
+      const guruList = users.filter(u => u.role === 'GURU');
       return (
-        <>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">NUPTK</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm" placeholder="Masukkan NUPTK" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nama Guru</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm" placeholder="Masukkan Nama Guru" />
-          </div>
-        </>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Pilih Akun Guru</label>
+          <select 
+            required 
+            className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+            value={selectedUserId}
+            onChange={e => setSelectedUserId(e.target.value)}
+          >
+            <option value="">-- Pilih Guru --</option>
+            {guruList.map(u => (
+              <option key={u.id} value={u.id}>{u.nama} ({u.mapel || 'Guru Kelas'})</option>
+            ))}
+          </select>
+        </div>
       );
     } else if (selectedRole === 'ORANG_TUA') {
+      const orangTuaList = users.filter(u => u.role === 'ORANG_TUA');
       return (
-        <>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nama Murid</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Masukkan Nama Murid" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nama Orang Tua</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Masukkan Nama Anda" />
-          </div>
-        </>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Pilih Akun Orang Tua</label>
+          <select 
+            required 
+            className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+            value={selectedUserId}
+            onChange={e => setSelectedUserId(e.target.value)}
+          >
+            <option value="">-- Pilih Orang Tua --</option>
+            {orangTuaList.map(u => (
+              <option key={u.id} value={u.id}>{u.nama}</option>
+            ))}
+          </select>
+        </div>
       );
     }
     return null;
@@ -133,7 +152,10 @@ const Login = () => {
             <div>
               <div className="flex items-center mb-6">
                 <button 
-                  onClick={() => setSelectedRole(null)}
+                  onClick={() => {
+                    setSelectedRole(null);
+                    setSelectedUserId('');
+                  }}
                   className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   <ArrowLeft className="h-5 w-5" />

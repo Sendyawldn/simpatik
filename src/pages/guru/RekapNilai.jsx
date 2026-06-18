@@ -5,6 +5,9 @@ import { Save, BookOpen, UserCheck, CheckCircle, MessageSquare, Filter } from 'l
 const RekapNilai = () => {
   const [activeTab, setActiveTab] = useState('nilai');
   
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+  const kelasDiajar = currentUser.kelas_diajar || ["1", "2", "3", "4", "5", "6"];
+
   // Data Master State
   const [grades, setGrades] = useState(initialGrades);
   const [attendances, setAttendances] = useState(initialAttendance);
@@ -14,6 +17,7 @@ const RekapNilai = () => {
   const [bulkMapel, setBulkMapel] = useState('');
   const [bulkKelas, setBulkKelas] = useState('5');
   const [bulkSemester, setBulkSemester] = useState('1');
+  const [bulkTipe, setBulkTipe] = useState('UH');
   const [bulkGrades, setBulkGrades] = useState({});
   const [historyKelasFilter, setHistoryKelasFilter] = useState('Semua');
   const [historySemesterFilter, setHistorySemesterFilter] = useState('Semua');
@@ -48,6 +52,18 @@ const RekapNilai = () => {
     } else {
       setBehaviorNotes(dummyBehaviorNotes);
     }
+
+    // Load Grades from LocalStorage
+    const savedGrades = localStorage.getItem('simpatik_grades');
+    if (savedGrades) {
+      setGrades([...initialGrades, ...JSON.parse(savedGrades)]);
+    }
+
+    // Load Attendance from LocalStorage
+    const savedAttendance = localStorage.getItem('simpatik_attendance');
+    if (savedAttendance) {
+      setAttendances([...initialAttendance, ...JSON.parse(savedAttendance)]);
+    }
   }, []);
 
   const handleGradeChange = (studentId, value) => {
@@ -75,7 +91,8 @@ const RekapNilai = () => {
           mapel: bulkMapel,
           nilai: parseInt(scoreStr),
           kelas: bulkKelas,
-          semester: bulkSemester
+          semester: bulkSemester,
+          tipe: bulkTipe
         });
       }
     });
@@ -86,6 +103,11 @@ const RekapNilai = () => {
     }
 
     setGrades([...grades, ...newGrades]);
+
+    // Simpan ke localStorage
+    const existingGrades = JSON.parse(localStorage.getItem('simpatik_grades') || '[]');
+    const updatedGrades = [...existingGrades, ...newGrades];
+    localStorage.setItem('simpatik_grades', JSON.stringify(updatedGrades));
     
     // Reset form
     setBulkMapel('');
@@ -110,6 +132,11 @@ const RekapNilai = () => {
     });
 
     setAttendances([...attendances, ...newAttendances]);
+
+    // Simpan ke localStorage
+    const existingAttendance = JSON.parse(localStorage.getItem('simpatik_attendance') || '[]');
+    const updatedAttendance = [...existingAttendance, ...newAttendances];
+    localStorage.setItem('simpatik_attendance', JSON.stringify(updatedAttendance));
     
     // Reset form (keep default 'Hadir')
     const resetAbsen = {};
@@ -129,7 +156,7 @@ const RekapNilai = () => {
       tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
       waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
       catatan: sikapFormData.catatan,
-      guru: 'Pak Budi' // Mock current teacher
+      guru: currentUser.nama || 'Guru'
     };
 
     const updatedNotes = [newNote, ...behaviorNotes];
@@ -243,12 +270,10 @@ const RekapNilai = () => {
                   value={bulkKelas}
                   onChange={e => setBulkKelas(e.target.value)}
                 >
-                  <option value="1">Kelas 1</option>
-                  <option value="2">Kelas 2</option>
-                  <option value="3">Kelas 3</option>
-                  <option value="4">Kelas 4</option>
-                  <option value="5">Kelas 5</option>
-                  <option value="6">Kelas 6</option>
+                  <option value="">-- Pilih Kelas --</option>
+                  {kelasDiajar.map(k => (
+                    <option key={k} value={k}>Kelas {k}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -260,6 +285,19 @@ const RekapNilai = () => {
                 >
                   <option value="1">Semester 1 (Ganjil)</option>
                   <option value="2">Semester 2 (Genap)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Tipe Penilaian</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm bg-white"
+                  value={bulkTipe}
+                  onChange={e => setBulkTipe(e.target.value)}
+                >
+                  <option value="PR">Pekerjaan Rumah (PR)</option>
+                  <option value="UH">Ulangan Harian (UH)</option>
+                  <option value="UTS">Ujian Tengah Semester (UTS)</option>
+                  <option value="UAS">Ujian Akhir Semester (UAS)</option>
                 </select>
               </div>
             </div>
@@ -319,12 +357,9 @@ const RekapNilai = () => {
                     onChange={e => setHistoryKelasFilter(e.target.value)}
                   >
                     <option value="Semua">Semua Kelas</option>
-                    <option value="1">Kelas 1</option>
-                    <option value="2">Kelas 2</option>
-                    <option value="3">Kelas 3</option>
-                    <option value="4">Kelas 4</option>
-                    <option value="5">Kelas 5</option>
-                    <option value="6">Kelas 6</option>
+                    {kelasDiajar.map(k => (
+                      <option key={k} value={k}>Kelas {k}</option>
+                    ))}
                   </select>
                   <span className="text-gray-300">|</span>
                   <select 
@@ -344,6 +379,7 @@ const RekapNilai = () => {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mata Pelajaran</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai</th>
                     </tr>
@@ -354,6 +390,11 @@ const RekapNilai = () => {
                         <tr key={grade.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getStudentName(grade.id_siswa)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grade.mapel}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                              {grade.tipe || '-'}
+                            </span>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Kelas {grade.kelas} - Smt {grade.semester}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">
                             <span className={`px-2 py-1 rounded ${grade.nilai >= 75 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}`}>
@@ -397,12 +438,10 @@ const RekapNilai = () => {
                   value={bulkAbsenKelas}
                   onChange={e => setBulkAbsenKelas(e.target.value)}
                 >
-                  <option value="1">Kelas 1</option>
-                  <option value="2">Kelas 2</option>
-                  <option value="3">Kelas 3</option>
-                  <option value="4">Kelas 4</option>
-                  <option value="5">Kelas 5</option>
-                  <option value="6">Kelas 6</option>
+                  <option value="">-- Pilih Kelas --</option>
+                  {kelasDiajar.map(k => (
+                    <option key={k} value={k}>Kelas {k}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -475,12 +514,9 @@ const RekapNilai = () => {
                     onChange={e => setAbsenKelasFilter(e.target.value)}
                   >
                     <option value="Semua">Semua Kelas</option>
-                    <option value="1">Kelas 1</option>
-                    <option value="2">Kelas 2</option>
-                    <option value="3">Kelas 3</option>
-                    <option value="4">Kelas 4</option>
-                    <option value="5">Kelas 5</option>
-                    <option value="6">Kelas 6</option>
+                    {kelasDiajar.map(k => (
+                      <option key={k} value={k}>Kelas {k}</option>
+                    ))}
                   </select>
                   <span className="text-gray-300">|</span>
                   <select 

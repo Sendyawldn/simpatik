@@ -11,7 +11,7 @@ import {
   LineElement
 } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
-import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements, behaviorNotes as dummyBehaviorNotes } from '../../data/dummyData';
+import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements, behaviorNotes as dummyBehaviorNotes, students as dummyStudents } from '../../data/dummyData';
 import { Bell, MessageSquare, Megaphone, Info } from 'lucide-react';
 
 ChartJS.register(
@@ -37,10 +37,12 @@ const OrangTuaDashboard = () => {
   const [selectedKelas, setSelectedKelas] = useState('5');
   const [selectedSemester, setSelectedSemester] = useState('1');
 
-  // In a real app, this is determined by user login.
-  // For dummy data, we assume this OrangTua is the parent of "Andi" (S01).
-  const childId = 'S01'; 
-  const childName = 'Andi Wijaya';
+  const myChildren = dummyStudents.filter(s => s.id_orangtua === currentUser.id);
+  const [selectedChildId, setSelectedChildId] = useState(myChildren.length > 0 ? myChildren[0].id : null);
+  const selectedChild = myChildren.find(s => s.id === selectedChildId) || { nama: 'Siswa', id: '' };
+
+  const childId = selectedChild.id; 
+  const childName = selectedChild.nama;
 
   useEffect(() => {
     // Load school announcements
@@ -72,8 +74,24 @@ const OrangTuaDashboard = () => {
     const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
     if (childNotes.length > 0) {
       setBehaviorNote(childNotes[0]);
+    } else {
+      setBehaviorNote(null);
     }
-  }, []);
+
+    // Load Grades
+    const savedGrades = localStorage.getItem('simpatik_grades');
+    if (savedGrades) {
+      const parsedGrades = JSON.parse(savedGrades);
+      setAllGrades([...dummyGrades, ...parsedGrades]);
+    }
+
+    // Load Attendance
+    const savedAttendance = localStorage.getItem('simpatik_attendance');
+    if (savedAttendance) {
+      const parsedAttendance = JSON.parse(savedAttendance);
+      setAllAttendance([...dummyAttendance, ...parsedAttendance]);
+    }
+  }, [childId]);
   
   // Filter grades and attendance for current child and selected semester
   const childGrades = allGrades.filter(g => g.id_siswa === childId && g.kelas === selectedKelas && g.semester === selectedSemester);
@@ -113,12 +131,36 @@ const OrangTuaDashboard = () => {
     ],
   };
 
+  // Grouping grades for Detail Table
+  const groupedGrades = {};
+  childGrades.forEach(g => {
+    if (!groupedGrades[g.mapel]) {
+      groupedGrades[g.mapel] = { PR: '-', UH: '-', UTS: '-', UAS: '-' };
+    }
+    groupedGrades[g.mapel][g.tipe || 'UH'] = g.nilai;
+  });
+
   return (
     <div className="space-y-6 pb-20 md:pb-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
         <div>
           <h2 className="text-2xl font-bold">Halo, {currentUser.nama || 'Orang Tua'}</h2>
-          <p className="mt-1 opacity-90">Berikut adalah perkembangan anak Anda, {childName}.</p>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="opacity-90">Perkembangan:</span>
+            {myChildren.length > 1 ? (
+              <select 
+                className="text-sm border-none rounded-md py-1 px-2 focus:ring-2 focus:ring-white bg-white/20 text-white font-semibold cursor-pointer outline-none"
+                value={selectedChildId}
+                onChange={e => setSelectedChildId(e.target.value)}
+              >
+                {myChildren.map(child => (
+                  <option key={child.id} value={child.id} className="text-indigo-900">{child.nama}</option>
+                ))}
+              </select>
+            ) : (
+              <span className="font-semibold">{childName}</span>
+            )}
+          </div>
         </div>
         
         {/* Global Filter for the Dashboard */}
@@ -256,6 +298,96 @@ const OrangTuaDashboard = () => {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        {/* Detail Nilai Per Mapel */}
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">📚 Detail Nilai</h3>
+            <span className="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded-md">Kelas {selectedKelas} | Smt {selectedSemester}</span>
+          </div>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mata Pelajaran</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">PR</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">UH</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">UTS</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">UAS</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {Object.keys(groupedGrades).length > 0 ? (
+                Object.entries(groupedGrades).map(([mapel, scores]) => (
+                  <tr key={mapel} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{mapel}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">{scores.PR}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">{scores.UH}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">{scores.UTS}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-500">{scores.UAS}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-4 py-6 text-center text-sm text-gray-400">Belum ada detail nilai</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Timeline Absen Harian */}
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800">📅 Riwayat Kehadiran Harian</h3>
+          </div>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {childAttendance.length > 0 ? (
+                childAttendance.slice().reverse().slice(0, 10).map(absen => {
+                  let statusBadge = '';
+                  if (absen.status === 'Hadir') statusBadge = 'bg-green-100 text-green-800';
+                  else if (absen.status === 'Sakit') statusBadge = 'bg-yellow-100 text-yellow-800';
+                  else if (absen.status === 'Izin') statusBadge = 'bg-blue-100 text-blue-800';
+                  else if (absen.status === 'Alpa') statusBadge = 'bg-red-100 text-red-800';
+
+                  return (
+                    <tr key={absen.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">
+                        {new Date(absen.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-sm">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadge}`}>
+                          {absen.status === 'Hadir' && '🟢'}
+                          {absen.status === 'Sakit' && '🟡'}
+                          {absen.status === 'Izin' && '🔵'}
+                          {absen.status === 'Alpa' && '🔴'}
+                          <span className="ml-1">{absen.status}</span>
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })
+              ) : (
+                <tr>
+                  <td colSpan="2" className="px-4 py-6 text-center text-sm text-gray-400">Belum ada riwayat absensi</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {childAttendance.length > 10 && (
+            <div className="mt-4 text-center">
+              <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Lihat Semua</button>
+            </div>
+          )}
         </div>
       </div>
       

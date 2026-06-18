@@ -1,11 +1,21 @@
 export const users = [
   { id: "U01", nama: "Admin Sekolah", role: "ADMIN" },
-  { id: "U02", nama: "Budi Santoso", role: "GURU", mapel: "Matematika" },
-  { id: "U02B", nama: "Siti Aminah", role: "GURU", mapel: "Bahasa Indonesia" },
-  { id: "U02C", nama: "Ahmad Dahlan", role: "GURU", mapel: "IPA" },
+  { id: "U02", nama: "Budi Santoso", role: "GURU", mapel: "Matematika", kelas_diajar: ["4","5","6"] },
+  { id: "U02B", nama: "Siti Aminah", role: "GURU", mapel: "Bahasa Indonesia", kelas_diajar: ["1","2","3","4","5","6"] },
+  { id: "U02C", nama: "Ahmad Dahlan", role: "GURU", mapel: "IPA", kelas_diajar: ["4","5","6"] },
+  { id: "U02D", nama: "Dewi Rahayu", role: "GURU", mapel: "PJOK", kelas_diajar: ["1","2","3","4","5","6"] },
   { id: "U03", nama: "Bapak/Ibu Andi", role: "ORANG_TUA" },
   { id: "U04", nama: "Bapak/Ibu Budi", role: "ORANG_TUA" },
-  { id: "U05", nama: "Bapak/Ibu Citra", role: "ORANG_TUA" }
+  { id: "U05", nama: "Bapak/Ibu Citra", role: "ORANG_TUA" },
+  { id: "U06", nama: "Bapak/Ibu Dewi", role: "ORANG_TUA" },
+  { id: "U07", nama: "Bapak/Ibu Eko", role: "ORANG_TUA" },
+  { id: "U08", nama: "Bapak/Ibu Faisal", role: "ORANG_TUA" },
+  { id: "U09", nama: "Bapak/Ibu Gita", role: "ORANG_TUA" },
+  { id: "U10", nama: "Bapak/Ibu Hendra", role: "ORANG_TUA" },
+  { id: "U11", nama: "Bapak/Ibu Indah", role: "ORANG_TUA" },
+  { id: "U12", nama: "Bapak/Ibu Joko", role: "ORANG_TUA" },
+  { id: "U13", nama: "Bapak/Ibu Kiki", role: "ORANG_TUA" },
+  { id: "U14", nama: "Bapak/Ibu Lestari", role: "ORANG_TUA" }
 ];
 
 export const students = [
@@ -38,7 +48,8 @@ for (let k = 1; k <= 6; k++) {
         mapel: mapel,
         nilai: score,
         kelas: k.toString(),
-        semester: sem.toString()
+        semester: sem.toString(),
+        tipe: Math.random() > 0.5 ? "UH" : "PR"
       });
     });
   }
@@ -53,7 +64,8 @@ students.slice(1).forEach(student => {
       mapel: mapel,
       nilai: score,
       kelas: student.kelas,
-      semester: "1"
+      semester: "1",
+      tipe: "UTS"
     });
   });
 });
