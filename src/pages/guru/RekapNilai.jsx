@@ -12,14 +12,18 @@ const RekapNilai = () => {
 
   // Bulk Input State - Nilai
   const [bulkMapel, setBulkMapel] = useState('');
+  const [bulkKelas, setBulkKelas] = useState('5');
   const [bulkSemester, setBulkSemester] = useState('1');
   const [bulkGrades, setBulkGrades] = useState({});
+  const [historyKelasFilter, setHistoryKelasFilter] = useState('Semua');
   const [historySemesterFilter, setHistorySemesterFilter] = useState('Semua');
 
   // Bulk Input State - Absen
   const [bulkDate, setBulkDate] = useState(new Date().toISOString().split('T')[0]);
+  const [bulkAbsenKelas, setBulkAbsenKelas] = useState('5');
   const [bulkAbsenSemester, setBulkAbsenSemester] = useState('1');
   const [bulkAbsen, setBulkAbsen] = useState({});
+  const [absenKelasFilter, setAbsenKelasFilter] = useState('Semua');
   const [absenSemesterFilter, setAbsenSemesterFilter] = useState('Semua');
 
   // Input State - Sikap
@@ -70,7 +74,8 @@ const RekapNilai = () => {
           id_siswa: studentId,
           mapel: bulkMapel,
           nilai: parseInt(scoreStr),
-          semester: parseInt(bulkSemester)
+          kelas: bulkKelas,
+          semester: bulkSemester
         });
       }
     });
@@ -85,7 +90,7 @@ const RekapNilai = () => {
     // Reset form
     setBulkMapel('');
     setBulkGrades({});
-    showSuccessMessage(`Berhasil menyimpan ${newGrades.length} nilai pelajaran ${bulkMapel} untuk Semester ${bulkSemester}.`);
+    showSuccessMessage(`Berhasil menyimpan ${newGrades.length} nilai pelajaran ${bulkMapel} untuk Kelas ${bulkKelas} Semester ${bulkSemester}.`);
   };
 
   const handleSaveBulkAbsen = (e) => {
@@ -99,7 +104,8 @@ const RekapNilai = () => {
         id_siswa: studentId,
         tanggal: bulkDate,
         status: bulkAbsen[studentId],
-        semester: parseInt(bulkAbsenSemester)
+        kelas: bulkAbsenKelas,
+        semester: bulkAbsenSemester
       });
     });
 
@@ -110,7 +116,7 @@ const RekapNilai = () => {
     students.forEach(s => { resetAbsen[s.id] = 'Hadir'; });
     setBulkAbsen(resetAbsen);
     
-    showSuccessMessage(`Berhasil menyimpan absensi kelas untuk tanggal ${bulkDate} (Semester ${bulkAbsenSemester}).`);
+    showSuccessMessage(`Berhasil menyimpan absensi kelas untuk tanggal ${bulkDate} (Kelas ${bulkAbsenKelas} Semester ${bulkAbsenSemester}).`);
   };
 
   const handleSaveSikap = (e) => {
@@ -144,13 +150,17 @@ const RekapNilai = () => {
     return student ? student.nama : 'Unknown';
   };
 
-  const filteredGrades = historySemesterFilter === 'Semua' 
-    ? grades 
-    : grades.filter(g => g.semester === parseInt(historySemesterFilter));
+  const filteredGrades = grades.filter(g => {
+    const matchKelas = historyKelasFilter === 'Semua' || g.kelas === historyKelasFilter;
+    const matchSemester = historySemesterFilter === 'Semua' || g.semester === historySemesterFilter;
+    return matchKelas && matchSemester;
+  });
 
-  const filteredAttendances = absenSemesterFilter === 'Semua'
-    ? attendances
-    : attendances.filter(a => a.semester === parseInt(absenSemesterFilter));
+  const filteredAttendances = attendances.filter(a => {
+    const matchKelas = absenKelasFilter === 'Semua' || a.kelas === absenKelasFilter;
+    const matchSemester = absenSemesterFilter === 'Semua' || a.semester === absenSemesterFilter;
+    return matchKelas && matchSemester;
+  });
 
   return (
     <div className="space-y-6 pb-20 md:pb-6">
@@ -227,6 +237,21 @@ const RekapNilai = () => {
                 />
               </div>
               <div>
+                <label className="block text-sm font-semibold text-teal-900 mb-2">Pilih Kelas</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm bg-white"
+                  value={bulkKelas}
+                  onChange={e => setBulkKelas(e.target.value)}
+                >
+                  <option value="1">Kelas 1</option>
+                  <option value="2">Kelas 2</option>
+                  <option value="3">Kelas 3</option>
+                  <option value="4">Kelas 4</option>
+                  <option value="5">Kelas 5</option>
+                  <option value="6">Kelas 6</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-semibold text-teal-900 mb-2">Pilih Semester</label>
                 <select 
                   className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm bg-white"
@@ -235,10 +260,6 @@ const RekapNilai = () => {
                 >
                   <option value="1">Semester 1 (Ganjil)</option>
                   <option value="2">Semester 2 (Genap)</option>
-                  <option value="3">Semester 3 (Ganjil)</option>
-                  <option value="4">Semester 4 (Genap)</option>
-                  <option value="5">Semester 5 (Ganjil)</option>
-                  <option value="6">Semester 6 (Genap)</option>
                 </select>
               </div>
             </div>
@@ -293,6 +314,20 @@ const RekapNilai = () => {
                     <Filter className="h-4 w-4" />
                   </span>
                   <select 
+                    className="border-none focus:ring-0 py-2 pl-2 pr-4 sm:text-sm text-gray-700 rounded-md"
+                    value={historyKelasFilter}
+                    onChange={e => setHistoryKelasFilter(e.target.value)}
+                  >
+                    <option value="Semua">Semua Kelas</option>
+                    <option value="1">Kelas 1</option>
+                    <option value="2">Kelas 2</option>
+                    <option value="3">Kelas 3</option>
+                    <option value="4">Kelas 4</option>
+                    <option value="5">Kelas 5</option>
+                    <option value="6">Kelas 6</option>
+                  </select>
+                  <span className="text-gray-300">|</span>
+                  <select 
                     className="border-none focus:ring-0 py-2 pl-2 pr-8 sm:text-sm text-gray-700 rounded-md"
                     value={historySemesterFilter}
                     onChange={e => setHistorySemesterFilter(e.target.value)}
@@ -300,10 +335,6 @@ const RekapNilai = () => {
                     <option value="Semua">Semua Semester</option>
                     <option value="1">Semester 1</option>
                     <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                    <option value="5">Semester 5</option>
-                    <option value="6">Semester 6</option>
                   </select>
                 </div>
               </div>
@@ -323,7 +354,7 @@ const RekapNilai = () => {
                         <tr key={grade.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getStudentName(grade.id_siswa)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{grade.mapel}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Semester {grade.semester}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Kelas {grade.kelas} - Smt {grade.semester}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-bold">
                             <span className={`px-2 py-1 rounded ${grade.nilai >= 75 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'}`}>
                               {grade.nilai}
@@ -334,7 +365,7 @@ const RekapNilai = () => {
                     ) : (
                       <tr>
                         <td colSpan="4" className="px-6 py-8 text-center text-sm text-gray-500">
-                          Tidak ada riwayat nilai untuk {historySemesterFilter === 'Semua' ? 'semua semester' : `Semester ${historySemesterFilter}`}.
+                          Tidak ada riwayat nilai untuk {historyKelasFilter === 'Semua' ? 'semua kelas' : `Kelas ${historyKelasFilter}`} - {historySemesterFilter === 'Semua' ? 'semua semester' : `Semester ${historySemesterFilter}`}.
                         </td>
                       </tr>
                     )}
@@ -360,6 +391,21 @@ const RekapNilai = () => {
                 />
               </div>
               <div>
+                <label className="block text-sm font-semibold text-indigo-900 mb-2">Pilih Kelas</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
+                  value={bulkAbsenKelas}
+                  onChange={e => setBulkAbsenKelas(e.target.value)}
+                >
+                  <option value="1">Kelas 1</option>
+                  <option value="2">Kelas 2</option>
+                  <option value="3">Kelas 3</option>
+                  <option value="4">Kelas 4</option>
+                  <option value="5">Kelas 5</option>
+                  <option value="6">Kelas 6</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-semibold text-indigo-900 mb-2">Pilih Semester</label>
                 <select 
                   className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
@@ -368,10 +414,6 @@ const RekapNilai = () => {
                 >
                   <option value="1">Semester 1 (Ganjil)</option>
                   <option value="2">Semester 2 (Genap)</option>
-                  <option value="3">Semester 3 (Ganjil)</option>
-                  <option value="4">Semester 4 (Genap)</option>
-                  <option value="5">Semester 5 (Ganjil)</option>
-                  <option value="6">Semester 6 (Genap)</option>
                 </select>
               </div>
             </div>
@@ -428,6 +470,20 @@ const RekapNilai = () => {
                     <Filter className="h-4 w-4" />
                   </span>
                   <select 
+                    className="border-none focus:ring-0 py-2 pl-2 pr-4 sm:text-sm text-gray-700 rounded-md"
+                    value={absenKelasFilter}
+                    onChange={e => setAbsenKelasFilter(e.target.value)}
+                  >
+                    <option value="Semua">Semua Kelas</option>
+                    <option value="1">Kelas 1</option>
+                    <option value="2">Kelas 2</option>
+                    <option value="3">Kelas 3</option>
+                    <option value="4">Kelas 4</option>
+                    <option value="5">Kelas 5</option>
+                    <option value="6">Kelas 6</option>
+                  </select>
+                  <span className="text-gray-300">|</span>
+                  <select 
                     className="border-none focus:ring-0 py-2 pl-2 pr-8 sm:text-sm text-gray-700 rounded-md"
                     value={absenSemesterFilter}
                     onChange={e => setAbsenSemesterFilter(e.target.value)}
@@ -435,10 +491,6 @@ const RekapNilai = () => {
                     <option value="Semua">Semua Semester</option>
                     <option value="1">Semester 1</option>
                     <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                    <option value="5">Semester 5</option>
-                    <option value="6">Semester 6</option>
                   </select>
                 </div>
               </div>
@@ -464,7 +516,7 @@ const RekapNilai = () => {
                         return (
                           <tr key={absen.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{absen.tanggal}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Semester {absen.semester}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Kelas {absen.kelas} - Smt {absen.semester}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{getStudentName(absen.id_siswa)}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                               <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}`}>
@@ -477,7 +529,7 @@ const RekapNilai = () => {
                     ) : (
                       <tr>
                         <td colSpan="4" className="px-6 py-8 text-center text-sm text-gray-500">
-                          Tidak ada riwayat kehadiran untuk {absenSemesterFilter === 'Semua' ? 'semua semester' : `Semester ${absenSemesterFilter}`}.
+                          Tidak ada riwayat kehadiran untuk {absenKelasFilter === 'Semua' ? 'semua kelas' : `Kelas ${absenKelasFilter}`} - {absenSemesterFilter === 'Semua' ? 'semua semester' : `Semester ${absenSemesterFilter}`}.
                         </td>
                       </tr>
                     )}

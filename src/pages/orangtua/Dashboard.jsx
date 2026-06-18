@@ -34,6 +34,7 @@ const OrangTuaDashboard = () => {
   // Custom states for data to combine dummy and local storage
   const [allGrades, setAllGrades] = useState(dummyGrades);
   const [allAttendance, setAllAttendance] = useState(dummyAttendance);
+  const [selectedKelas, setSelectedKelas] = useState('5');
   const [selectedSemester, setSelectedSemester] = useState('1');
 
   // In a real app, this is determined by user login.
@@ -75,15 +76,15 @@ const OrangTuaDashboard = () => {
   }, []);
   
   // Filter grades and attendance for current child and selected semester
-  const childGrades = allGrades.filter(g => g.id_siswa === childId && g.semester === parseInt(selectedSemester));
-  const childAttendance = allAttendance.filter(a => a.id_siswa === childId && a.semester === parseInt(selectedSemester));
+  const childGrades = allGrades.filter(g => g.id_siswa === childId && g.kelas === selectedKelas && g.semester === selectedSemester);
+  const childAttendance = allAttendance.filter(a => a.id_siswa === childId && a.kelas === selectedKelas && a.semester === selectedSemester);
 
   // Chart Data: Grades
   const gradeData = {
     labels: childGrades.map(g => g.mapel),
     datasets: [
       {
-        label: `Nilai Semester ${selectedSemester}`,
+        label: `Nilai Kelas ${selectedKelas} Semester ${selectedSemester}`,
         data: childGrades.map(g => g.nilai),
         backgroundColor: 'rgba(79, 70, 229, 0.6)',
       },
@@ -100,7 +101,7 @@ const OrangTuaDashboard = () => {
     labels: ['Hadir', 'Sakit', 'Izin', 'Alpa'],
     datasets: [
       {
-        label: `Total Hari (Sem ${selectedSemester})`,
+        label: `Total Hari (Kls ${selectedKelas} Sem ${selectedSemester})`,
         data: [hadirCount, sakitCount, izinCount, alpaCount],
         backgroundColor: [
           'rgba(16, 185, 129, 0.6)', // Green for Hadir
@@ -120,20 +121,29 @@ const OrangTuaDashboard = () => {
           <p className="mt-1 opacity-90">Berikut adalah perkembangan anak Anda, {childName}.</p>
         </div>
         
-        {/* Global Semester Filter for the Dashboard */}
+        {/* Global Filter for the Dashboard */}
         <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/30 flex items-center gap-3">
-          <span className="text-sm font-medium">Tampilkan Data:</span>
+          <span className="text-sm font-medium">Data Kelas:</span>
+          <select 
+            className="text-sm border-none rounded-md py-1.5 px-3 focus:ring-2 focus:ring-white bg-white text-indigo-900 font-semibold cursor-pointer"
+            value={selectedKelas}
+            onChange={e => setSelectedKelas(e.target.value)}
+          >
+            <option value="1">Kelas 1</option>
+            <option value="2">Kelas 2</option>
+            <option value="3">Kelas 3</option>
+            <option value="4">Kelas 4</option>
+            <option value="5">Kelas 5</option>
+            <option value="6">Kelas 6</option>
+          </select>
+          <span className="text-sm font-medium">Semester:</span>
           <select 
             className="text-sm border-none rounded-md py-1.5 px-3 focus:ring-2 focus:ring-white bg-white text-indigo-900 font-semibold cursor-pointer"
             value={selectedSemester}
             onChange={e => setSelectedSemester(e.target.value)}
           >
-            <option value="1">Semester 1</option>
-            <option value="2">Semester 2</option>
-            <option value="3">Semester 3</option>
-            <option value="4">Semester 4</option>
-            <option value="5">Semester 5</option>
-            <option value="6">Semester 6</option>
+            <option value="1">Smt 1</option>
+            <option value="2">Smt 2</option>
           </select>
         </div>
       </div>
@@ -216,7 +226,7 @@ const OrangTuaDashboard = () => {
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">Capaian Akademik</h3>
-            <span className="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded-md">Semester {selectedSemester}</span>
+            <span className="text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-1 rounded-md">Kelas {selectedKelas} | Smt {selectedSemester}</span>
           </div>
           
           <div className="h-72 relative w-full">
@@ -224,7 +234,7 @@ const OrangTuaDashboard = () => {
               <Bar data={gradeData} options={{ maintainAspectRatio: false }} />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
-                Belum ada data nilai untuk Semester {selectedSemester}.
+                Belum ada data nilai untuk Kelas {selectedKelas} Semester {selectedSemester}.
               </div>
             )}
           </div>
@@ -234,7 +244,7 @@ const OrangTuaDashboard = () => {
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">Rekapitulasi Kehadiran</h3>
-            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-md">Semester {selectedSemester}</span>
+            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-1 rounded-md">Kelas {selectedKelas} | Smt {selectedSemester}</span>
           </div>
           
           <div className="h-72 relative w-full">
@@ -242,7 +252,7 @@ const OrangTuaDashboard = () => {
               <Bar data={attendanceData} options={{ maintainAspectRatio: false }} />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-100 rounded-xl">
-                Belum ada data absensi untuk Semester {selectedSemester}.
+                Belum ada data absensi untuk Kelas {selectedKelas} Semester {selectedSemester}.
               </div>
             )}
           </div>
