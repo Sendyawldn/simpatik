@@ -101,7 +101,7 @@ students.slice(1).forEach(student => {
   attendance.push({
     id: `A${attendanceIdCounter++}`,
     id_siswa: student.id,
-    tanggal: "2023-10-01",
+    tanggal: "2026-10-01",
     status: Math.random() > 0.1 ? "Hadir" : "Sakit",
     kelas: student.kelas,
     semester: "1"
@@ -109,28 +109,28 @@ students.slice(1).forEach(student => {
 });
 
 export const announcements = [
-  { id: "P01", judul: "Libur Akhir Semester Ganjil", tanggal: "2023-12-15", isi: "Diberitahukan kepada seluruh siswa dan wali murid, libur semester ganjil akan dimulai pada tanggal 18 Desember 2023 hingga 2 Januari 2024. Harap menggunakan waktu liburan dengan kegiatan positif." },
-  { id: "P02", judul: "Rapat Wali Murid", tanggal: "2023-11-20", isi: "Mengundang Bapak/Ibu wali murid kelas 5 untuk hadir dalam rapat pengambilan rapor sisipan yang akan diselenggarakan pada hari Jumat, 24 November 2023 di aula sekolah." },
-  { id: "P03", judul: "Kegiatan Ekstrakurikuler Wajib", tanggal: "2023-10-10", isi: "Mengingatkan kembali bahwa kegiatan ekstrakurikuler Pramuka wajib diikuti oleh seluruh siswa kelas 4 hingga kelas 6 setiap hari Sabtu pukul 08.00 - 10.00 WIB." },
-  { id: "P04", judul: "Lomba Cerdas Cermat Tingkat Kota", tanggal: "2023-09-05", isi: "Sekolah kita akan berpartisipasi dalam Lomba Cerdas Cermat tingkat kota bulan depan. Seleksi tingkat sekolah akan dilaksanakan minggu ini." },
+  { id: "P01", judul: "Libur Akhir Semester Ganjil", tanggal: "2026-12-15", isi: "Diberitahukan kepada seluruh siswa dan wali murid, libur semester ganjil akan dimulai pada tanggal 18 Desember 2026 hingga 2 Januari 2027. Harap menggunakan waktu liburan dengan kegiatan positif." },
+  { id: "P02", judul: "Rapat Wali Murid", tanggal: "2026-11-20", isi: "Mengundang Bapak/Ibu wali murid kelas 5 untuk hadir dalam rapat pengambilan rapor sisipan yang akan diselenggarakan pada hari Jumat, 24 November 2026 di aula sekolah." },
+  { id: "P03", judul: "Kegiatan Ekstrakurikuler Wajib", tanggal: "2026-10-10", isi: "Mengingatkan kembali bahwa kegiatan ekstrakurikuler Pramuka wajib diikuti oleh seluruh siswa kelas 4 hingga kelas 6 setiap hari Sabtu pukul 08.00 - 10.00 WIB." },
+  { id: "P04", judul: "Lomba Cerdas Cermat Tingkat Kota", tanggal: "2026-09-05", isi: "Sekolah kita akan berpartisipasi dalam Lomba Cerdas Cermat tingkat kota bulan depan. Seleksi tingkat sekolah akan dilaksanakan minggu ini." },
 ];
 
 export const classAnnouncements = [
-  { id: "CP01", judul: "Pembayaran Uang Kas Kelas", tanggal: "2023-10-15", isi: "Mengingatkan kembali kepada Bapak/Ibu wali murid kelas 5 untuk melunasi iuran uang kas bulan Oktober sebesar Rp 20.000 paling lambat hari Jumat minggu ini.", guru: "Pak Budi Santoso" },
-  { id: "CP02", judul: "Membawa Alat Praktek Menggambar", tanggal: "2023-10-18", isi: "Mohon diingatkan kepada putra/putrinya untuk membawa buku gambar A3, krayon, dan pensil warna untuk tugas praktek Seni Budaya besok pagi.", guru: "Pak Budi Santoso" }
+  { id: "CP01", judul: "Pembayaran Uang Kas Kelas", tanggal: "2026-10-15", isi: "Mengingatkan kembali kepada Bapak/Ibu wali murid kelas 5 untuk melunasi iuran uang kas bulan Oktober sebesar Rp 20.000 paling lambat hari Jumat minggu ini.", guru: "Pak Budi Santoso" },
+  { id: "CP02", judul: "Membawa Alat Praktek Menggambar", tanggal: "2026-10-18", isi: "Mohon diingatkan kepada putra/putrinya untuk membawa buku gambar A3, krayon, dan pensil warna untuk tugas praktek Seni Budaya besok pagi.", guru: "Pak Budi Santoso" }
 ];
 
 export const messages = [
-  { id: "M01", pengirim: "U02", penerima: "U03", tanggal: "2023-10-05 09:30", isi: "Selamat pagi Bapak/Ibu. Andi hari ini sangat aktif di kelas, terutama saat pelajaran Matematika." },
-  { id: "M02", pengirim: "U03", penerima: "U02", tanggal: "2023-10-05 10:15", isi: "Selamat pagi Pak Budi. Syukurlah, terima kasih atas bimbingannya selalu." },
-  { id: "M03", pengirim: "U02", penerima: "U03", tanggal: "2023-10-05 10:20", isi: "Sama-sama Bapak/Ibu. Mohon terus didukung belajar di rumahnya ya." }
+  { id: "M01", pengirim: "U02", penerima: "U03", tanggal: "2026-10-05 09:30", isi: "Selamat pagi Bapak/Ibu. Andi hari ini sangat aktif di kelas, terutama saat pelajaran Matematika." },
+  { id: "M02", pengirim: "U03", penerima: "U02", tanggal: "2026-10-05 10:15", isi: "Selamat pagi Pak Budi. Syukurlah, terima kasih atas bimbingannya selalu." },
+  { id: "M03", pengirim: "U02", penerima: "U03", tanggal: "2026-10-05 10:20", isi: "Sama-sama Bapak/Ibu. Mohon terus didukung belajar di rumahnya ya." }
 ];
 
 export const behaviorNotes = [
   {
     id: "B01",
     id_siswa: "S01",
-    tanggal: "15 Oktober 2023",
+    tanggal: "15 Oktober 2026",
     waktu: "10:30",
     catatan: "Andi hari ini sangat antusias saat pelajaran IPA. Ia berhasil memimpin kelompoknya untuk menyelesaikan tugas praktek dengan nilai sempurna. Namun, mohon tetap dinasihati agar tidak terlalu sering mengobrol dengan teman sebangkunya saat sedang menyimak penjelasan.",
     guru: "Bapak Budi Santoso"
@@ -138,7 +138,7 @@ export const behaviorNotes = [
   {
     id: "B02",
     id_siswa: "S02",
-    tanggal: "14 Oktober 2023",
+    tanggal: "14 Oktober 2026",
     waktu: "13:15",
     catatan: "Budi menunjukkan kemajuan yang sangat pesat dalam kedisiplinan mengumpulkan tugas tepat waktu minggu ini. Tolong pertahankan semangat belajarnya di rumah ya, Bapak/Ibu.",
     guru: "Ibu Siti Aminah"
@@ -146,7 +146,7 @@ export const behaviorNotes = [
   {
     id: "B03",
     id_siswa: "S03",
-    tanggal: "10 Oktober 2023",
+    tanggal: "10 Oktober 2026",
     waktu: "09:00",
     catatan: "Citra hari ini terlihat sedikit kurang sehat dan tertidur beberapa kali saat pelajaran berlangsung. Saya sudah mengarahkannya ke UKS sementara. Mohon dipantau jam tidurnya di rumah.",
     guru: "Bapak Budi Santoso"
