@@ -48,13 +48,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
       <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+      <div className="mx-auto w-full max-w-md relative z-10">
         <div className="flex justify-center text-primary">
           <GraduationCap size={64} />
         </div>
@@ -66,8 +66,8 @@ const Login = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-white/80 backdrop-blur-lg py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-white/20">
+      <div className="mt-8 mx-auto w-full max-w-md relative z-10">
+        <div className="bg-white/80 backdrop-blur-lg py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-white/20">
           
           {!selectedRole ? (
             <div className="space-y-6">

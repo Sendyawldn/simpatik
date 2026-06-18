@@ -76,7 +76,7 @@ const Chat = () => {
   );
 
   return (
-    <div className="bg-white shadow-sm border border-gray-200 rounded-xl flex h-[calc(100vh-140px)] overflow-hidden">
+    <div className="bg-white shadow-sm border border-gray-200 rounded-xl flex h-[calc(100dvh-160px)] md:h-[calc(100vh-140px)] overflow-hidden">
       
       {/* LEFT PANE - Sidebar Contacts (Visible on mobile if NO contact selected, visible on desktop always) */}
       <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} w-full md:w-80 border-r border-gray-200 flex-col bg-white`}>
@@ -149,12 +149,12 @@ const Chat = () => {
               <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold">
                 {activeContact?.nama?.charAt(0)}
               </div>
-              <div className="ml-4">
-                <h3 className="text-md font-semibold text-gray-800">{activeContact?.nama}</h3>
+              <div className="ml-4 flex-1 overflow-hidden">
+                <h3 className="text-md font-semibold text-gray-800 truncate">{activeContact?.nama}</h3>
                 {currentUser.role === 'ORANG_TUA' ? (
-                  <p className="text-xs text-gray-500">Re: {childName}</p>
+                  <p className="text-xs text-gray-500 truncate">Re: {childName}</p>
                 ) : (
-                  <p className="text-xs text-gray-500">{otherRoleName}</p>
+                  <p className="text-xs text-gray-500 truncate">{otherRoleName}</p>
                 )}
               </div>
             </div>
@@ -220,7 +220,7 @@ const Chat = () => {
               />
               <button
                 onClick={handleSend}
-                className="bg-teal-600 text-white rounded-full p-2 h-10 w-10 flex items-center justify-center hover:bg-teal-700 transition-colors shadow-sm"
+                className="bg-teal-600 text-white rounded-full p-2 h-10 w-10 flex items-center justify-center flex-shrink-0 hover:bg-teal-700 transition-colors shadow-sm"
               >
                 <Send className="w-5 h-5 ml-0.5" />
               </button>
