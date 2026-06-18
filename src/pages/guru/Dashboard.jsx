@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { students, grades, announcements as dummyAnnouncements, classAnnouncements as dummyClassAnnouncements } from '../../data/dummyData';
 import { CheckCircle, AlertCircle, FileText, Megaphone, Send, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const GuruDashboard = () => {
+  const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
   const [classAnnouncements, setClassAnnouncements] = useState([]);
   const [newAnnouncement, setNewAnnouncement] = useState({ judul: '', isi: '' });
@@ -180,7 +182,12 @@ const GuruDashboard = () => {
                 <p className="text-sm font-medium text-indigo-600">{student.nama}</p>
                 <p className="text-sm text-gray-500">NIS: {student.nis} • Kelas: {student.kelas}</p>
               </div>
-              <button className="text-sm text-blue-600 font-medium hover:text-blue-800">Lihat Detail</button>
+              <button 
+                onClick={() => navigate(`/guru/siswa/${student.id}`)}
+                className="text-sm text-blue-600 font-medium hover:text-blue-800"
+              >
+                Lihat Detail
+              </button>
             </li>
           ))}
         </ul>

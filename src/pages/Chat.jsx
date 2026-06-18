@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { messages as initialMessages, users } from '../data/dummyData';
+import { messages as initialMessages, users, students } from '../data/dummyData';
 import { Send, Search, UserCircle, MoreVertical, ArrowLeft } from 'lucide-react';
 
 const Chat = () => {
@@ -9,6 +9,9 @@ const Chat = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const isGuru = currentUser.role === 'GURU';
   const otherRoleName = isGuru ? 'Orang Tua' : 'Guru';
+
+  const myChildren = students.filter(s => s.id_orangtua === currentUser.id);
+  const childName = myChildren.length > 0 ? myChildren.map(c => c.nama).join(', ') : 'Siswa';
   
   // Generate mock contacts to simulate WhatsApp Web feel
   const [contacts, setContacts] = useState([]);
@@ -148,7 +151,11 @@ const Chat = () => {
               </div>
               <div className="ml-4">
                 <h3 className="text-md font-semibold text-gray-800">{activeContact?.nama}</h3>
-                <p className="text-xs text-gray-500">{otherRoleName}</p>
+                {currentUser.role === 'ORANG_TUA' ? (
+                  <p className="text-xs text-gray-500">Re: {childName}</p>
+                ) : (
+                  <p className="text-xs text-gray-500">{otherRoleName}</p>
+                )}
               </div>
             </div>
 
@@ -179,6 +186,27 @@ const Chat = () => {
                 );
               })}
             </div>
+
+            {/* Quick Messages */}
+            {!isGuru && (
+              <div className="bg-gray-100 px-3 pt-2">
+                <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                  {[
+                    "Anak saya hari ini tidak masuk karena sakit",
+                    "Saya ingin menanyakan perkembangan belajar anak saya",
+                    "Terima kasih atas informasinya, Pak/Bu Guru"
+                  ].map((msg, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setNewMessage(msg)}
+                      className="text-xs bg-white border border-gray-300 rounded-full px-3 py-1 text-gray-600 hover:bg-gray-50 whitespace-nowrap shadow-sm"
+                    >
+                      {msg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Input Area */}
             <div className="p-2 md:p-3 bg-gray-100 flex items-center gap-2">

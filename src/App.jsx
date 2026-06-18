@@ -7,7 +7,9 @@ import MasterData from './pages/admin/MasterData';
 import Pengumuman from './pages/admin/Pengumuman';
 import GuruDashboard from './pages/guru/Dashboard';
 import RekapNilai from './pages/guru/RekapNilai';
+import ProfilSiswa from './pages/guru/ProfilSiswa';
 import OrangTuaDashboard from './pages/orangtua/Dashboard';
+import PengumumanOrangTua from './pages/orangtua/Pengumuman';
 import Chat from './pages/Chat';
 
 function App() {
@@ -27,12 +29,14 @@ function App() {
         <Route element={<Layout allowedRoles={['GURU']} />}>
           <Route path="/guru" element={<GuruDashboard />} />
           <Route path="/guru/nilai" element={<RekapNilai />} />
+          <Route path="/guru/siswa/:studentId" element={<ProfilSiswa />} />
           <Route path="/guru/chat" element={<Chat />} />
         </Route>
 
         {/* Orang Tua Routes */}
         <Route element={<Layout allowedRoles={['ORANG_TUA']} />}>
           <Route path="/orang-tua" element={<OrangTuaDashboard />} />
+          <Route path="/orang-tua/pengumuman" element={<PengumumanOrangTua />} />
           <Route path="/orang-tua/chat" element={<Chat />} />
         </Route>
       </Routes>

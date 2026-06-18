@@ -22,6 +22,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   } else if (role === 'ORANG_TUA') {
     links = [
       { to: '/orang-tua', icon: LayoutDashboard, label: 'Dashboard Anak' },
+      { to: '/orang-tua/pengumuman', icon: Bell, label: 'Pengumuman' },
       { to: '/orang-tua/chat', icon: MessageSquare, label: 'Chat Guru' },
     ];
   }
@@ -60,6 +61,11 @@ const Sidebar = ({ isOpen, onClose }) => {
               >
                 <link.icon className="h-5 w-5 mr-3" />
                 {link.label}
+                {role === 'ORANG_TUA' && link.to === '/orang-tua' && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    3
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
