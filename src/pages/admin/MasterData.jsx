@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { students as initialStudents, users as initialUsers, mapelList } from '../../data/dummyData';
+import { students as initialStudents, users as initialUsers } from '../../data/dummyData';
 import { Plus, Edit2, Trash2, Search, Users, GraduationCap } from 'lucide-react';
 
 const MasterData = () => {
@@ -247,7 +247,7 @@ const MasterData = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{teacher.nama}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {teacher.mapel && teacher.mapel !== 'Guru Kelas' ? `Guru Bidang ${teacher.mapel}` : 'Guru Kelas'}
+                          {(!teacher.mapel || teacher.mapel === 'Guru Kelas') ? 'Guru Kelas' : 'Guru Bidang'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -344,11 +344,9 @@ const MasterData = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Mata Pelajaran yang Diajarkan</label>
                       <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-teal-500 focus:border-teal-500 sm:text-sm" value={guruFormData.mapel} onChange={e => setGuruFormData({...guruFormData, mapel: e.target.value})}>
-                        <option value="">Pilih Mata Pelajaran</option>
+                        <option value="">Pilih Posisi</option>
                         <option value="Guru Kelas">Guru Kelas</option>
-                        {mapelList.map((m, i) => (
-                          <option key={i} value={m}>{m}</option>
-                        ))}
+                        <option value="Guru Bidang">Guru Bidang</option>
                       </select>
                     </div>
                   </div>
