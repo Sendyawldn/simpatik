@@ -34,7 +34,7 @@ function App() {
         </Route>
 
         {/* Orang Tua Routes */}
-        <Route element={<Layout allowedRoles={["ORANG TUA"]} />}>
+        <Route element={<Layout allowedRoles={["ORANG_TUA"]} />}>
           <Route path="/orang-tua" element={<OrangTuaDashboard />} />
           <Route
             path="/orang-tua/pengumuman"
