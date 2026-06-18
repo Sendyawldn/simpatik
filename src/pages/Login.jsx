@@ -19,6 +19,21 @@ const Login = () => {
   };
 
   const renderFormFields = () => {
+    if (selectedRole === 'ORANG_TUA') {
+      return (
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nama Siswa</label>
+            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Masukkan nama siswa" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Nama Orang Tua</label>
+            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Masukkan nama orang tua" />
+          </div>
+        </>
+      );
+    }
+    
     return (
       <>
         <div>
