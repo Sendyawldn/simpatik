@@ -19,18 +19,18 @@ export const users = [
 ];
 
 export const students = [
-  { id: "S01", nis: "1011", nama: "Andi Wijaya", kelas: "1", id_orangtua: "U03" },
-  { id: "S02", nis: "1012", nama: "Budi Gunawan", kelas: "1", id_orangtua: "U04" },
-  { id: "S03", nis: "1013", nama: "Citra Lestari", kelas: "2", id_orangtua: "U05" },
-  { id: "S04", nis: "1014", nama: "Dewi Sartika", kelas: "2", id_orangtua: "U06" },
-  { id: "S05", nis: "1015", nama: "Eko Prasetyo", kelas: "3", id_orangtua: "U07" },
-  { id: "S06", nis: "1016", nama: "Faisal Rahman", kelas: "3", id_orangtua: "U08" },
-  { id: "S07", nis: "1017", nama: "Gita Gutawa", kelas: "4", id_orangtua: "U09" },
-  { id: "S08", nis: "1018", nama: "Hendra Saputra", kelas: "4", id_orangtua: "U10" },
-  { id: "S09", nis: "1019", nama: "Indah Permatasari", kelas: "5", id_orangtua: "U11" },
-  { id: "S10", nis: "1020", nama: "Joko Anwar", kelas: "5", id_orangtua: "U12" },
-  { id: "S11", nis: "1021", nama: "Kiki Fatmala", kelas: "6", id_orangtua: "U13" },
-  { id: "S12", nis: "1022", nama: "Lestari Ningsih", kelas: "6", id_orangtua: "U14" },
+  { id: "S01", nis: "1011", nama: "Andi Wijaya", kelas: "1A", id_orangtua: "U03" },
+  { id: "S02", nis: "1012", nama: "Budi Gunawan", kelas: "1B", id_orangtua: "U04" },
+  { id: "S03", nis: "1013", nama: "Citra Lestari", kelas: "2A", id_orangtua: "U05" },
+  { id: "S04", nis: "1014", nama: "Dewi Sartika", kelas: "2B", id_orangtua: "U06" },
+  { id: "S05", nis: "1015", nama: "Eko Prasetyo", kelas: "3A", id_orangtua: "U07" },
+  { id: "S06", nis: "1016", nama: "Faisal Rahman", kelas: "3A", id_orangtua: "U08" },
+  { id: "S07", nis: "1017", nama: "Gita Gutawa", kelas: "4A", id_orangtua: "U09" },
+  { id: "S08", nis: "1018", nama: "Hendra Saputra", kelas: "4A", id_orangtua: "U10" },
+  { id: "S09", nis: "1019", nama: "Indah Permatasari", kelas: "5A", id_orangtua: "U11" },
+  { id: "S10", nis: "1020", nama: "Joko Anwar", kelas: "5A", id_orangtua: "U12" },
+  { id: "S11", nis: "1021", nama: "Kiki Fatmala", kelas: "6A", id_orangtua: "U13" },
+  { id: "S12", nis: "1022", nama: "Lestari Ningsih", kelas: "6A", id_orangtua: "U14" },
 ];
 
 export const mapelList = ["Matematika", "Bahasa Indonesia", "IPA", "IPS", "Bahasa Inggris", "PKn", "Seni Budaya", "PJOK"];
@@ -47,7 +47,7 @@ for (let k = 1; k <= 6; k++) {
         id_siswa: "S01",
         mapel: mapel,
         nilai: score,
-        kelas: k.toString(),
+        kelas: `${k}A`,
         semester: sem.toString(),
         tipe: Math.random() > 0.5 ? "UH" : "PR"
       });
@@ -78,9 +78,16 @@ for (let k = 1; k <= 6; k++) {
     for (let day = 1; day <= 10; day++) {
       const randomVal = Math.random();
       let status = "Hadir";
+      let time = "06:45";
       if (randomVal > 0.95) status = "Alpa";
       else if (randomVal > 0.90) status = "Izin";
       else if (randomVal > 0.85) status = "Sakit";
+      else {
+        const mins = Math.floor(Math.random() * 45) + 30;
+        const hr = mins >= 60 ? '07' : '06';
+        const m = (mins % 60).toString().padStart(2, '0');
+        time = `${hr}:${m}`;
+      }
 
       const month = sem === 1 ? '10' : '03'; 
       const dayStr = day.toString().padStart(2, '0');
@@ -90,7 +97,8 @@ for (let k = 1; k <= 6; k++) {
         id_siswa: "S01",
         tanggal: `202${k}-${month}-${dayStr}`,
         status: status,
-        kelas: k.toString(),
+        waktu: status === "Hadir" ? time : null,
+        kelas: `${k}A`,
         semester: sem.toString()
       });
     }
@@ -98,11 +106,20 @@ for (let k = 1; k <= 6; k++) {
 }
 
 students.slice(1).forEach(student => {
+  const isHadir = Math.random() > 0.1;
+  let time = null;
+  if (isHadir) {
+    const mins = Math.floor(Math.random() * 45) + 30;
+    const hr = mins >= 60 ? '07' : '06';
+    const m = (mins % 60).toString().padStart(2, '0');
+    time = `${hr}:${m}`;
+  }
   attendance.push({
     id: `A${attendanceIdCounter++}`,
     id_siswa: student.id,
     tanggal: "2026-10-01",
-    status: Math.random() > 0.1 ? "Hadir" : "Sakit",
+    status: isHadir ? "Hadir" : "Sakit",
+    waktu: time,
     kelas: student.kelas,
     semester: "1"
   });
@@ -151,4 +168,14 @@ export const behaviorNotes = [
     catatan: "Citra hari ini terlihat sedikit kurang sehat dan tertidur beberapa kali saat pelajaran berlangsung. Saya sudah mengarahkannya ke UKS sementara. Mohon dipantau jam tidurnya di rumah.",
     guru: "Bapak Budi Santoso"
   }
+];
+
+export const bukuPenghubungData = [
+  { id: "BP01", id_siswa: "S01", pengirim: "Guru", nama_pengirim: "Bapak Budi Santoso", tanggal: "2026-10-15 09:00", isi: "Andi hari ini lupa membawa krayon untuk pelajaran menggambar. Mohon diingatkan besok ya Pak/Bu." },
+  { id: "BP02", id_siswa: "S01", pengirim: "OrangTua", nama_pengirim: "Bapak/Ibu Andi", tanggal: "2026-10-15 09:30", isi: "Baik Pak Budi, maaf sebelumnya. Akan kami siapkan nanti malam." },
+];
+
+export const characterStats = [
+  { id_siswa: "S01", kedisiplinan: 4, kebersihan: 5, sikap: 4 },
+  { id_siswa: "S02", kedisiplinan: 3, kebersihan: 4, sikap: 5 },
 ];

@@ -13,6 +13,8 @@ const MasterData = () => {
   // Modal states
   const [isSiswaModalOpen, setIsSiswaModalOpen] = useState(false);
   const [isGuruModalOpen, setIsGuruModalOpen] = useState(false);
+  const [isKenaikanModalOpen, setIsKenaikanModalOpen] = useState(false);
+  const [kenaikanData, setKenaikanData] = useState({ asal: '', tujuan: '' });
   
   const [siswaFormData, setSiswaFormData] = useState({ nis: '', nama: '', kelas: '', id_orangtua: '' });
   const [guruFormData, setGuruFormData] = useState({ nuptk: '', nama: '', mapel: '' });
@@ -80,6 +82,16 @@ const MasterData = () => {
     setGuruFormData({ nuptk: '', nama: '', mapel: '' });
   };
 
+  const handleProsesKenaikan = (e) => {
+    e.preventDefault();
+    if (!kenaikanData.asal || !kenaikanData.tujuan) return;
+    if (window.confirm(`Yakin ingin memindahkan semua siswa Kelas ${kenaikanData.asal} ke Kelas ${kenaikanData.tujuan}?`)) {
+      setStudents(students.map(s => s.kelas === kenaikanData.asal ? { ...s, kelas: kenaikanData.tujuan } : s));
+      setIsKenaikanModalOpen(false);
+      setKenaikanData({ asal: '', tujuan: '' });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -93,13 +105,21 @@ const MasterData = () => {
         </div>
         
         {activeTab === 'siswa' ? (
-          <button
-            onClick={() => setIsSiswaModalOpen(true)}
-            className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
-          >
-            <Plus className="h-5 w-5 mr-2 -ml-1" />
-            Tambah Siswa
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setIsKenaikanModalOpen(true)}
+              className="inline-flex items-center justify-center px-4 py-2 border border-indigo-600 rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50 transition-colors"
+            >
+              Proses Kenaikan Kelas
+            </button>
+            <button
+              onClick={() => setIsSiswaModalOpen(true)}
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+            >
+              <Plus className="h-5 w-5 mr-2 -ml-1" />
+              Tambah Siswa
+            </button>
+          </div>
         ) : (
           <button
             onClick={() => setIsGuruModalOpen(true)}
@@ -163,12 +183,14 @@ const MasterData = () => {
                 onChange={e => setFilterKelas(e.target.value)}
               >
                 <option value="Semua">Semua Kelas</option>
-                <option value="1">Kelas 1</option>
-                <option value="2">Kelas 2</option>
-                <option value="3">Kelas 3</option>
-                <option value="4">Kelas 4</option>
-                <option value="5">Kelas 5</option>
-                <option value="6">Kelas 6</option>
+                <option value="1A">Kelas 1A</option>
+                <option value="1B">Kelas 1B</option>
+                <option value="2A">Kelas 2A</option>
+                <option value="2B">Kelas 2B</option>
+                <option value="3A">Kelas 3A</option>
+                <option value="4A">Kelas 4A</option>
+                <option value="5A">Kelas 5A</option>
+                <option value="6A">Kelas 6A</option>
               </select>
             </div>
           )}
@@ -296,12 +318,14 @@ const MasterData = () => {
                       <label className="block text-sm font-medium text-gray-700">Kelas</label>
                       <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={siswaFormData.kelas} onChange={e => setSiswaFormData({...siswaFormData, kelas: e.target.value})}>
                         <option value="">Pilih Kelas</option>
-                        <option value="1">Kelas 1</option>
-                        <option value="2">Kelas 2</option>
-                        <option value="3">Kelas 3</option>
-                        <option value="4">Kelas 4</option>
-                        <option value="5">Kelas 5</option>
-                        <option value="6">Kelas 6</option>
+                        <option value="1A">Kelas 1A</option>
+                        <option value="1B">Kelas 1B</option>
+                        <option value="2A">Kelas 2A</option>
+                        <option value="2B">Kelas 2B</option>
+                        <option value="3A">Kelas 3A</option>
+                        <option value="4A">Kelas 4A</option>
+                        <option value="5A">Kelas 5A</option>
+                        <option value="6A">Kelas 6A</option>
                       </select>
                     </div>
                   </div>
@@ -356,6 +380,66 @@ const MasterData = () => {
                     Simpan Guru
                   </button>
                   <button type="button" onClick={() => setIsGuruModalOpen(false)} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Batal
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Kenaikan Kelas */}
+      {isKenaikanModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={() => setIsKenaikanModalOpen(false)}></div>
+            </div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <form onSubmit={handleProsesKenaikan}>
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Proses Kenaikan Kelas</h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700">Kelas Asal</label>
+                        <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={kenaikanData.asal} onChange={e => setKenaikanData({...kenaikanData, asal: e.target.value})}>
+                          <option value="">Pilih Kelas</option>
+                          <option value="1A">Kelas 1A</option>
+                          <option value="1B">Kelas 1B</option>
+                          <option value="2A">Kelas 2A</option>
+                          <option value="2B">Kelas 2B</option>
+                          <option value="3A">Kelas 3A</option>
+                          <option value="4A">Kelas 4A</option>
+                          <option value="5A">Kelas 5A</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center pt-6 text-gray-400">
+                        <span>→</span>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700">Kelas Tujuan</label>
+                        <select required className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={kenaikanData.tujuan} onChange={e => setKenaikanData({...kenaikanData, tujuan: e.target.value})}>
+                          <option value="">Pilih Kelas</option>
+                          <option value="2A">Kelas 2A</option>
+                          <option value="2B">Kelas 2B</option>
+                          <option value="3A">Kelas 3A</option>
+                          <option value="4A">Kelas 4A</option>
+                          <option value="5A">Kelas 5A</option>
+                          <option value="6A">Kelas 6A</option>
+                          <option value="Lulus">Lulus</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button type="submit" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                    Proses Kenaikan
+                  </button>
+                  <button type="button" onClick={() => setIsKenaikanModalOpen(false)} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     Batal
                   </button>
                 </div>

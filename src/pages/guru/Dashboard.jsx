@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { students, grades, announcements as dummyAnnouncements, classAnnouncements as dummyClassAnnouncements } from '../../data/dummyData';
-import { CheckCircle, AlertCircle, FileText, Megaphone, Send, Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { students, announcements as dummyAnnouncements, classAnnouncements as dummyClassAnnouncements } from '../../data/dummyData';
+import { CheckCircle, AlertCircle, FileText, Megaphone, Send, Info, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const GuruDashboard = () => {
@@ -9,6 +9,9 @@ const GuruDashboard = () => {
   const [classAnnouncements, setClassAnnouncements] = useState([]);
   const [newAnnouncement, setNewAnnouncement] = useState({ judul: '', isi: '' });
   const [successMsg, setSuccessMsg] = useState('');
+  
+  const [bukuPenghubung, setBukuPenghubung] = useState({ id_siswa: '', isi: '' });
+  const [successBuku, setSuccessBuku] = useState('');
 
   useEffect(() => {
     // School announcements
@@ -38,14 +41,22 @@ const GuruDashboard = () => {
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
+  const handleSendBuku = (e) => {
+    e.preventDefault();
+    if (!bukuPenghubung.id_siswa || !bukuPenghubung.isi) return;
+    setSuccessBuku('Pesan Buku Penghubung berhasil dikirim ke orang tua.');
+    setTimeout(() => setSuccessBuku(''), 3000);
+    setBukuPenghubung({ id_siswa: '', isi: '' });
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-          Dashboard Guru
+          Dashboard Wali Kelas
         </h2>
         <p className="mt-1 text-sm text-gray-500">
-          Selamat datang. Berikut adalah ringkasan kelas Anda hari ini.
+          Selamat datang, Guru Kelas 1A. Berikut adalah ringkasan kelas Anda hari ini.
         </p>
       </div>
 
@@ -160,26 +171,101 @@ const GuruDashboard = () => {
         </div>
       </div>
       
-      <div className="bg-white shadow-sm rounded-xl border border-gray-100">
-        <div className="px-4 py-5 sm:px-6 border-b border-gray-100">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Daftar Siswa Kelas Anda</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        {/* Presensi Harian */}
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100">
+          <div className="px-4 py-5 sm:px-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Presensi Harian Kelas 1A</h3>
+            <button className="text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-md hover:bg-indigo-100 font-medium">Simpan Presensi</button>
+          </div>
+          <div className="overflow-x-auto max-h-[28rem] custom-scrollbar">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Siswa</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status Kehadiran</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {students.filter(s => s.kelas === '1A').map((student) => (
+                  <tr key={student.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="text-sm font-medium text-indigo-600 cursor-pointer hover:underline" onClick={() => navigate(`/guru/siswa/${student.id}`)}>{student.nama}</div>
+                      <div className="text-xs text-gray-500">NIS: {student.nis}</div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center">
+                      <select className="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer bg-white">
+                        <option value="Hadir">🟢 Hadir</option>
+                        <option value="Sakit">🟡 Sakit</option>
+                        <option value="Izin">🔵 Izin</option>
+                        <option value="Alpa">🔴 Alpa</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+                {students.filter(s => s.kelas === '1A').length === 0 && (
+                  <tr>
+                    <td colSpan="2" className="px-4 py-8 text-center text-sm text-gray-500">Tidak ada siswa di kelas ini</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <ul className="divide-y divide-gray-100">
-          {students.map((student) => (
-            <li key={student.id} className="p-4 hover:bg-gray-50 flex items-center justify-between">
+
+        {/* Buku Penghubung */}
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100 flex flex-col">
+          <div className="px-4 py-5 sm:px-6 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-indigo-500" />
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Buku Penghubung Harian</h3>
+            </div>
+            <p className="mt-1 text-sm text-gray-500">Kirim pesan singkat langsung ke orang tua siswa.</p>
+          </div>
+          
+          <div className="p-5 flex-1 flex flex-col">
+            {successBuku && (
+              <div className="mb-4 bg-green-50 border border-green-200 text-green-700 p-3 rounded-lg text-sm flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                {successBuku}
+              </div>
+            )}
+            
+            <form onSubmit={handleSendBuku} className="space-y-4 flex-1 flex flex-col">
               <div>
-                <p className="text-sm font-medium text-indigo-600">{student.nama}</p>
-                <p className="text-sm text-gray-500">NIS: {student.nis} • Kelas: {student.kelas}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Siswa</label>
+                <select 
+                  className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  value={bukuPenghubung.id_siswa}
+                  onChange={e => setBukuPenghubung({...bukuPenghubung, id_siswa: e.target.value})}
+                  required
+                >
+                  <option value="">-- Pilih Siswa --</option>
+                  {students.filter(s => s.kelas === '1A').map(s => (
+                    <option key={s.id} value={s.id}>{s.nama}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Catatan ke Orang Tua</label>
+                <textarea 
+                  rows="6" 
+                  placeholder="Misal: Hari ini Budi lupa membawa krayon untuk pelajaran menggambar..." 
+                  className="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm resize-none"
+                  value={bukuPenghubung.isi}
+                  onChange={e => setBukuPenghubung({...bukuPenghubung, isi: e.target.value})}
+                  required
+                ></textarea>
               </div>
               <button 
-                onClick={() => navigate(`/guru/siswa/${student.id}`)}
-                className="text-sm text-blue-600 font-medium hover:text-blue-800"
+                type="submit"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition-colors mt-auto"
               >
-                Lihat Detail
+                <Send className="w-4 h-4" /> Kirim Pesan
               </button>
-            </li>
-          ))}
-        </ul>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

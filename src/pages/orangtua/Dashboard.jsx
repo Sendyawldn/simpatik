@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +10,9 @@ import {
   PointElement,
   LineElement
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
-import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements, behaviorNotes as dummyBehaviorNotes, students as dummyStudents } from '../../data/dummyData';
-import { Bell, MessageSquare, Megaphone, Info } from 'lucide-react';
+import { Bar } from 'react-chartjs-2';
+import { grades as dummyGrades, attendance as dummyAttendance, announcements as dummyAnnouncements, students as dummyStudents, bukuPenghubungData, characterStats } from '../../data/dummyData';
+import { MessageSquare, Megaphone, Info, CheckCircle, Star, Clock, Send } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -29,13 +29,17 @@ const OrangTuaDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
   const [announcements, setAnnouncements] = useState([]);
   const [classAnnouncements, setClassAnnouncements] = useState([]);
-  const [behaviorNote, setBehaviorNote] = useState(null);
+
   
   // Custom states for data to combine dummy and local storage
   const [allGrades, setAllGrades] = useState(dummyGrades);
   const [allAttendance, setAllAttendance] = useState(dummyAttendance);
-  const [selectedKelas, setSelectedKelas] = useState('5');
+  const [selectedKelas, setSelectedKelas] = useState('5A');
   const [selectedSemester, setSelectedSemester] = useState('1');
+
+  const [bukuPenghubung, setBukuPenghubung] = useState([]);
+  const [characterData, setCharacterData] = useState(null);
+  const [todayAttendance, setTodayAttendance] = useState(null);
 
   const myChildren = dummyStudents.filter(s => s.id_orangtua === currentUser.id);
   const [selectedChildId, setSelectedChildId] = useState(myChildren.length > 0 ? myChildren[0].id : null);
@@ -53,20 +57,28 @@ const OrangTuaDashboard = () => {
       setClassAnnouncements(mod.classAnnouncements || []);
     });
 
-    // Load behavior notes for the child
-    const parsedNotes = dummyBehaviorNotes;
-    const childNotes = parsedNotes.filter(n => n.id_siswa === childId);
-    if (childNotes.length > 0) {
-      setBehaviorNote(childNotes[0]);
-    } else {
-      setBehaviorNote(null);
-    }
+
 
     // Load Grades
     setAllGrades(dummyGrades);
 
     // Load Attendance
     setAllAttendance(dummyAttendance);
+    
+    // Load character stats
+    const stats = characterStats.find(s => s.id_siswa === childId);
+    setCharacterData(stats || { kedisiplinan: 4, kebersihan: 4, sikap: 4 });
+
+    // Load buku penghubung
+    const bp = bukuPenghubungData.filter(b => b.id_siswa === childId);
+    setBukuPenghubung(bp);
+
+    // Get latest attendance
+    const childAtt = dummyAttendance.filter(a => a.id_siswa === childId);
+    if (childAtt.length > 0) {
+      const sorted = childAtt.sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
+      setTodayAttendance(sorted[0]);
+    }
   }, [childId]);
   
   // Filter grades and attendance for current child and selected semester
@@ -147,12 +159,12 @@ const OrangTuaDashboard = () => {
             value={selectedKelas}
             onChange={e => setSelectedKelas(e.target.value)}
           >
-            <option value="1">Kelas 1</option>
-            <option value="2">Kelas 2</option>
-            <option value="3">Kelas 3</option>
-            <option value="4">Kelas 4</option>
-            <option value="5">Kelas 5</option>
-            <option value="6">Kelas 6</option>
+            <option value="1A">Kelas 1A</option>
+            <option value="2A">Kelas 2A</option>
+            <option value="3A">Kelas 3A</option>
+            <option value="4A">Kelas 4A</option>
+            <option value="5A">Kelas 5A</option>
+            <option value="6A">Kelas 6A</option>
           </select>
           <span className="text-sm font-medium">Semester:</span>
           <select 
@@ -210,31 +222,96 @@ const OrangTuaDashboard = () => {
         )}
       </div>
 
-      {/* Laporan Perilaku / Catatan Guru Section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Bell className="text-pink-500 w-5 h-5" />
-            <h3 className="text-lg font-semibold text-gray-800">Catatan Perilaku & Sikap</h3>
+      {/* Status Kehadiran Hari Ini */}
+      {todayAttendance && (
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-full ${todayAttendance.status === 'Hadir' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+              {todayAttendance.status === 'Hadir' ? <CheckCircle className="w-6 h-6" /> : <Clock className="w-6 h-6" />}
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-800">Status Kehadiran Hari Ini: {todayAttendance.status}</h3>
+              {todayAttendance.status === 'Hadir' && todayAttendance.waktu && (
+                <p className="text-sm text-gray-500">Tiba di sekolah pukul {todayAttendance.waktu} WIB</p>
+              )}
+            </div>
           </div>
         </div>
-        <div className="p-5 bg-pink-50/30">
-          {behaviorNote ? (
-            <div>
-              <p className="text-sm text-gray-800 italic bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                "{behaviorNote.catatan}"
-              </p>
-              <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
-                <span>Dari: {behaviorNote.guru}</span>
-                <span>{behaviorNote.tanggal} - {behaviorNote.waktu}</span>
+      )}
+
+      {/* Buku Penghubung Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-indigo-50/30">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="text-indigo-600 w-5 h-5" />
+            <h3 className="text-lg font-semibold text-gray-800">Buku Penghubung</h3>
+          </div>
+        </div>
+        <div className="p-5 space-y-4">
+          {bukuPenghubung.length > 0 ? (
+            <div className="space-y-4 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+              {bukuPenghubung.map(msg => (
+                <div key={msg.id} className={`flex flex-col ${msg.pengirim === 'OrangTua' ? 'items-end' : 'items-start'}`}>
+                  <div className={`max-w-[85%] rounded-2xl p-3 ${msg.pengirim === 'OrangTua' ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>
+                    <p className="text-xs opacity-70 mb-1">{msg.nama_pengirim}</p>
+                    <p className="text-sm">{msg.isi}</p>
+                  </div>
+                  <span className="text-[10px] text-gray-400 mt-1">{msg.tanggal}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-4 text-sm text-gray-500">Belum ada pesan di buku penghubung.</div>
+          )}
+          
+          {/* Reply Form */}
+          <div className="mt-4 flex items-center gap-2">
+            <input type="text" placeholder="Balas pesan guru..." className="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <button className="bg-indigo-600 text-white p-2 rounded-full hover:bg-indigo-700">
+              <Send className="w-4 h-4 ml-[-2px]" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Raport Karakter Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-1 h-full bg-yellow-400"></div>
+        <div className="p-4 border-b border-gray-100 flex items-center gap-2 bg-yellow-50/30">
+          <Star className="text-yellow-500 w-5 h-5" />
+          <h3 className="text-lg font-semibold text-gray-800">Raport Karakter & Perkembangan</h3>
+        </div>
+        <div className="p-5">
+          {characterData ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-yellow-50 rounded-xl p-4 text-center border border-yellow-100">
+                <p className="text-sm font-semibold text-yellow-800 mb-2">Kedisiplinan</p>
+                <div className="flex justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < characterData.kedisiplinan ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`} />
+                  ))}
+                </div>
+              </div>
+              <div className="bg-green-50 rounded-xl p-4 text-center border border-green-100">
+                <p className="text-sm font-semibold text-green-800 mb-2">Kebersihan</p>
+                <div className="flex justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < characterData.kebersihan ? 'text-green-500 fill-green-500' : 'text-gray-300'}`} />
+                  ))}
+                </div>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-4 text-center border border-blue-100">
+                <p className="text-sm font-semibold text-blue-800 mb-2">Sikap & Sopan Santun</p>
+                <div className="flex justify-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-5 h-5 ${i < characterData.sikap ? 'text-blue-500 fill-blue-500' : 'text-gray-300'}`} />
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-3 text-gray-500">
-              <Info className="w-5 h-5 text-blue-400" />
-              <p className="text-sm">Belum ada catatan sikap terbaru dari guru untuk saat ini.</p>
-            </div>
+             <p className="text-sm text-gray-500">Data karakter belum tersedia.</p>
           )}
         </div>
       </div>
