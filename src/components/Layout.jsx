@@ -55,8 +55,8 @@ const Layout = ({ allowedRoles }) => {
           </div>
         </header>
         
-        <main className="pt-14 pb-16 min-h-screen overflow-y-auto">
-          <div className="h-full">
+        <main className="pt-14 pb-16 min-h-screen overflow-y-auto bg-gray-50">
+          <div className="h-full px-4 pt-4">
             <Outlet />
           </div>
         </main>

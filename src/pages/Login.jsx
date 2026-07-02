@@ -1,73 +1,112 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { users } from '../data/dummyData';
-import { UserCircle, ShieldCheck, GraduationCap, Users, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { users } from "../data/dummyData";
+import {
+  UserCircle,
+  ShieldCheck,
+  GraduationCap,
+  Users,
+  ArrowLeft,
+} from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isOrtuRoute = location.pathname === '/login-ortu';
-  const [selectedRole, setSelectedRole] = useState(isOrtuRoute ? 'ORANG_TUA' : null);
+  const isOrtuRoute = location.pathname === "/login-ortu";
+  const [selectedRole, setSelectedRole] = useState(
+    isOrtuRoute ? "ORANG_TUA" : null,
+  );
 
   useEffect(() => {
     if (isOrtuRoute) {
-      setSelectedRole('ORANG_TUA');
+      setSelectedRole("ORANG_TUA");
     }
   }, [isOrtuRoute]);
 
   const handleLogin = (e) => {
     if (e) e.preventDefault();
-    const user = users.find(u => u.role === selectedRole);
+    const user = users.find((u) => u.role === selectedRole);
     if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      if (selectedRole === 'ADMIN') navigate('/admin');
-      if (selectedRole === 'GURU') navigate('/guru');
-      if (selectedRole === 'ORANG_TUA') navigate('/orang-tua');
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      if (selectedRole === "ADMIN") navigate("/admin");
+      if (selectedRole === "GURU") navigate("/guru");
+      if (selectedRole === "ORANG_TUA") navigate("/orang-tua");
     }
   };
 
   const renderFormFields = () => {
-    if (selectedRole === 'ORANG_TUA') {
+    if (selectedRole === "ORANG_TUA") {
       return (
         <>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nama Siswa</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Masukkan nama siswa" />
+            <label className="block text-sm font-medium text-gray-700">
+              Nama Siswa
+            </label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+              placeholder="Masukkan nama siswa"
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nama Orang Tua</label>
-            <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="Masukkan nama orang tua" />
+            <label className="block text-sm font-medium text-gray-700">
+              Nama Orang Tua
+            </label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+              placeholder="Masukkan nama orang tua"
+            />
           </div>
         </>
       );
     }
-    
+
     return (
       <>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Username</label>
-          <input type="text" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Masukkan username" />
+          <label className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
+          <input
+            type="text"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="Masukkan username"
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Password</label>
-          <input type="password" required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="••••••••" />
+          <label className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            type="password"
+            required
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="••••••••"
+          />
         </div>
       </>
     );
   };
 
   const getRoleTitle = () => {
-    if (selectedRole === 'ADMIN') return 'Login Admin';
-    if (selectedRole === 'GURU') return 'Login Guru';
-    if (selectedRole === 'ORANG_TUA') return 'Login Orang Tua';
-    return '';
+    if (selectedRole === "ADMIN") return "Login Admin";
+    if (selectedRole === "GURU") return "Login Guru";
+    if (selectedRole === "ORANG_TUA") return "Login Orang Tua";
+    return "";
   };
 
   const getButtonColor = () => {
-    if (selectedRole === 'ADMIN') return 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:ring-indigo-500';
-    if (selectedRole === 'GURU') return 'from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 focus:ring-teal-500';
-    if (selectedRole === 'ORANG_TUA') return 'from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 focus:ring-orange-500';
-    return '';
+    if (selectedRole === "ADMIN")
+      return "from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:ring-indigo-500";
+    if (selectedRole === "GURU")
+      return "from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 focus:ring-teal-500";
+    if (selectedRole === "ORANG_TUA")
+      return "from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 focus:ring-orange-500";
+    return "";
   };
 
   return (
@@ -91,35 +130,27 @@ const Login = () => {
 
       <div className="mt-8 mx-auto w-full max-w-md relative z-10">
         <div className="bg-white/80 backdrop-blur-lg py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-white/20">
-          
           {!selectedRole ? (
             <div className="space-y-6">
               <div>
-                <p className="text-sm font-medium text-gray-700 text-center mb-4">Pilih Peran Anda:</p>
-                
+                <p className="text-sm font-medium text-gray-700 text-center mb-4">
+                  Pilih Peran Anda:
+                </p>
+
                 <button
-                  onClick={() => setSelectedRole('ADMIN')}
+                  onClick={() => setSelectedRole("ADMIN")}
                   className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-[1.02]"
                 >
                   <ShieldCheck className="mr-2 h-5 w-5" /> Admin
                 </button>
               </div>
-              
-              <div>
-                <button
-                  onClick={() => setSelectedRole('GURU')}
-                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all transform hover:scale-[1.02]"
-                >
-                  <UserCircle className="mr-2 h-5 w-5" /> Guru
-                </button>
-              </div>
 
               <div>
                 <button
-                  onClick={() => setSelectedRole('ORANG_TUA')}
-                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all transform hover:scale-[1.02]"
+                  onClick={() => setSelectedRole("GURU")}
+                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all transform hover:scale-[1.02]"
                 >
-                  <Users className="mr-2 h-5 w-5" /> Orang Tua
+                  <UserCircle className="mr-2 h-5 w-5" /> Guru
                 </button>
               </div>
             </div>
@@ -127,21 +158,23 @@ const Login = () => {
             <div>
               <div className="flex items-center mb-6">
                 {!isOrtuRoute && (
-                  <button 
+                  <button
                     onClick={() => setSelectedRole(null)}
                     className="text-gray-500 hover:text-gray-700 transition-colors"
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                 )}
-                <h3 className={`flex-1 text-center text-lg font-medium text-gray-900 ${!isOrtuRoute ? 'pr-5' : ''}`}>
+                <h3
+                  className={`flex-1 text-center text-lg font-medium text-gray-900 ${!isOrtuRoute ? "pr-5" : ""}`}
+                >
                   {getRoleTitle()}
                 </h3>
               </div>
-              
+
               <form onSubmit={handleLogin} className="space-y-6">
                 {renderFormFields()}
-                
+
                 <button
                   type="submit"
                   className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r ${getButtonColor()} focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all transform hover:scale-[1.02]`}
@@ -151,7 +184,6 @@ const Login = () => {
               </form>
             </div>
           )}
-
         </div>
       </div>
     </div>
