@@ -1,8 +1,12 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "app.vercel.simpatik_omega.twa",
-        "sha256_cert_fingerprints": ["AC:3F:F0:D6:43:06:9D:0F:32:3D:75:6A:0A:A3:18:EC:41:5B:31:AD:FF:80:30:72:9C:01:C3:7A:4B:10:4C:09"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.simpatik_omega.twa",
+      "sha256_cert_fingerprints": [
+        "AC:3F:F0:D6:43:06:9D:0F:32:3D:75:6A:0A:A3:18:EC:41:5B:31:AD:FF:80:30:72:9C:01:C3:7A:4B:10:4C:09"
+      ]
+    }
+  }
+]
