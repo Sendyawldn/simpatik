@@ -15,7 +15,7 @@ export default defineConfig({
         start_url: '/login-ortu',
         display: 'standalone',
         background_color: '#ffffff',
-        theme_color: '#f97316',
+        theme_color: '#ffffff',
         icons: [
           {
             src: '/pwa-192x192.png',
