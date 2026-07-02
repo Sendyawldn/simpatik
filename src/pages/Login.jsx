@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { users } from '../data/dummyData';
 import { UserCircle, ShieldCheck, GraduationCap, Users, ArrowLeft } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState(null);
+  const location = useLocation();
+  const isOrtuRoute = location.pathname === '/login-ortu';
+  const [selectedRole, setSelectedRole] = useState(isOrtuRoute ? 'ORANG_TUA' : null);
+
+  useEffect(() => {
+    if (isOrtuRoute) {
+      setSelectedRole('ORANG_TUA');
+    }
+  }, [isOrtuRoute]);
 
   const handleLogin = (e) => {
     if (e) e.preventDefault();
@@ -118,15 +126,15 @@ const Login = () => {
           ) : (
             <div>
               <div className="flex items-center mb-6">
-                <button 
-                  onClick={() => {
-                    setSelectedRole(null);
-                  }}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </button>
-                <h3 className="flex-1 text-center text-lg font-medium text-gray-900 pr-5">
+                {!isOrtuRoute && (
+                  <button 
+                    onClick={() => setSelectedRole(null)}
+                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                )}
+                <h3 className={`flex-1 text-center text-lg font-medium text-gray-900 ${!isOrtuRoute ? 'pr-5' : ''}`}>
                   {getRoleTitle()}
                 </h3>
               </div>

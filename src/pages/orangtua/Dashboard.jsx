@@ -443,11 +443,6 @@ const OrangTuaDashboard = () => {
           )}
         </div>
       </div>
-      
-      {/* Mobile Fab for Chat */}
-      <button className="md:hidden fixed bottom-6 right-6 bg-pink-500 text-white p-4 rounded-full shadow-lg hover:bg-pink-600 transition-colors z-50">
-        <MessageSquare className="w-6 h-6" />
-      </button>
     </div>
   );
 };

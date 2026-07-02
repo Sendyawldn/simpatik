@@ -17,6 +17,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/login-ortu" element={<Login />} />
 
         {/* Admin Routes */}
         <Route element={<Layout allowedRoles={["ADMIN"]} />}>
