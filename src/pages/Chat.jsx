@@ -76,7 +76,7 @@ const Chat = () => {
   );
 
   return (
-    <div className="bg-white shadow-sm border border-gray-200 rounded-xl flex h-[calc(100dvh-160px)] md:h-[calc(100vh-140px)] overflow-hidden">
+    <div className="bg-white shadow-sm border border-gray-200 rounded-xl flex w-full h-[calc(100dvh-160px)] md:h-[calc(100vh-140px)] overflow-hidden">
       
       {/* LEFT PANE - Sidebar Contacts (Visible on mobile if NO contact selected, visible on desktop always) */}
       <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} w-full md:w-80 border-r border-gray-200 flex-col bg-white`}>
@@ -133,11 +133,11 @@ const Chat = () => {
       </div>
 
       {/* RIGHT PANE - Chat Area (Visible on mobile if contact selected, visible on desktop always) */}
-      <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-[#efeae2]`}>
+      <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-1 min-w-0 flex-col bg-[#efeae2]`}>
         {activeContactId ? (
           <>
             {/* Header */}
-            <div className="bg-white p-3 flex items-center border-b border-gray-200 shadow-sm z-10">
+            <div className="bg-white p-3 flex items-center border-b border-gray-200 shadow-sm z-10 flex-shrink-0">
               {/* Back Button (Mobile Only) */}
               <button 
                 className="md:hidden mr-3 text-gray-600 hover:text-gray-900"
@@ -172,7 +172,7 @@ const Chat = () => {
                 const isMine = msg.pengirim === currentUser.id;
                 return (
                   <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] md:max-w-[75%] px-3 py-2 shadow-sm relative ${
+                    <div className={`max-w-[80%] md:max-w-[75%] px-3 py-2 shadow-sm relative break-words ${
                       isMine 
                         ? 'bg-[#d9fdd3] text-gray-800 rounded-lg rounded-tr-none' 
                         : 'bg-white text-gray-800 rounded-lg rounded-tl-none'
@@ -189,7 +189,7 @@ const Chat = () => {
 
             {/* Quick Messages */}
             {!isGuru && (
-              <div className="bg-gray-100 px-3 pt-2">
+              <div className="bg-gray-100 px-3 pt-2 flex-shrink-0">
                 <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                   {[
                     "Anak saya hari ini tidak masuk karena sakit",
@@ -209,10 +209,10 @@ const Chat = () => {
             )}
 
             {/* Input Area */}
-            <div className="p-2 md:p-3 bg-gray-100 flex items-center gap-2">
+            <div className="p-3 md:p-4 bg-gray-100 flex items-center gap-2 md:gap-3 flex-shrink-0 w-full">
               <input
                 type="text"
-                className="flex-1 border-none rounded-full md:rounded-lg px-4 py-2 md:py-3 text-sm shadow-sm focus:outline-none focus:ring-0"
+                className="flex-1 border border-gray-200 rounded-full md:rounded-lg px-4 py-2 md:py-3 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
                 placeholder="Ketik pesan..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
